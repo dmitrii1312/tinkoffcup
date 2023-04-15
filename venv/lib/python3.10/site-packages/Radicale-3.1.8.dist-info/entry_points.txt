@@ -1,0 +1,2 @@
+[console_scripts]
+radicale = radicale.__main__:run
