@@ -15,8 +15,8 @@
           <input type="datetime-local" id="startTime" name="startTime" required>
         <br><br>
 
-        <label for="endTime">Длительность работ:</label>
-          <input type="datetime-local" id="endTime" name="endTime" required>
+        <label for="durationTime">Длительность работ:</label>
+          <input type="durationTime" id="durationTime" name="durationTime" pattern="^([0-1][0-9]|2[0-3]):[0-5][0-9]$" required>
         <br><br>
 
         <label for="deadline">Дедлайн:</label>
@@ -50,8 +50,16 @@
       <input type="submit" value="Отправить">
     </form>
   </div>
-    
   </form>
   <footer></footer>
+
+  <!-- <script>
+    document.querySelector('form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const duration = document.getElementById('durationTime');
+        if (!duration.checkValidity())
+            alert('Valid time format: ' + duration.value);
+    });
+</script> -->
 </body>
 </html>

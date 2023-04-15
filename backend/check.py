@@ -24,43 +24,36 @@ def checkBlacklistzone(calendar,zonelist):
             return True
     return False
 
-def checkInterval(ievent):    
-    zones = getZones()
+# @params:
+# interval, data = json_full_config
+def checkInterval(ievent: interval, data:list) -> tuple:    
+
+    zones = list(data['calForZones'].keys())
+    blackList = data['black']
+
     im = []
     for zone in zones:
-        im.append(get_event(zone,datetime(2023,4,15,0,0,0),datetime(2023,4,15,23,25,0)))
-    blackList = getBlackZone()
+        im.append(get_event(zone, ievent.start, ievent.end))
+
     isFreeInZone = True        
     countFreeZone = 0 
 
     for izone in im:
         iFreeInZone = True
         for i in izone:
-            if (ievent.start.timestamp()>=i.start.timestamp() and ievent.start.timestamp()<i.end.timestamp()) or (ievent.end.timestamp()>i.start.timestamp() and ievent.end.timestamp()<=i.end.timestamp()) or blackList.count(i.zone)>0:
+            if (ievent.start.timestamp()>=i.start.timestamp() and
+                ievent.start.timestamp()<i.end.timestamp()) or (ievent.end.timestamp()>i.start.timestamp() and
+                ievent.end.timestamp()<=i.end.timestamp()) or blackList.count(i.zone) > 0:
                 iFreeInZone = False
                 if i.zone == ievent.zone:
                     isFreeInZone = iFreeInZone
                 break
         if iFreeInZone:
             countFreeZone +=1
-    return (isFreeInZone,countFreeZone)
+    return (isFreeInZone, countFreeZone)
 
-def getBlackZone() -> list:
-    with open(config_path, 'r') as json_file:
-        data=json.load(json_file)    
-    return data['black']
-
-def getZones() -> list:
-    with open(config_path, 'r') as json_file:
-        data=json.load(json_file)    
-    return data['calForZones']
-
-def get_event(calname,startdate,enddate):
-    url = "http://188.143.142.181:5232/"
-    username = "admin"
-    password = "admin"
-    calendar = CalendarZone (url,username,password,calname)
-    tasks = calendar.get_task(startdate,enddate)
+def get_event(calendar, startdate, enddate):
+    tasks = calendar.get_task(startdate, enddate)
     itasks=[]
     for task in tasks:
         start = task.icalendar_component.get("DTSTART").dt
