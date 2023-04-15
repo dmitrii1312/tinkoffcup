@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from datetime import datetime
+from datetime import datetime, timedelta
 import os.path as path
 import time
 
@@ -52,12 +52,14 @@ def index():
         )
 
 
-        
+        duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
+        new_dateTime = start_dateTime + duration
+
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
         interval_obj = interval(
             start_dateTime,
-            end_time,
+            new_dateTime,
             entered_zone)
 
         # И делаем чек для этого интервала
@@ -68,6 +70,9 @@ def index():
             calendar_zones_objs[entered_zone].add_task(
                 interval_obj.start,
                 interval_obj.end)
+            return "OK after checkdata"
+        else:
+            return "HUITA"
 
         print(start_dateTime, end_time, str(request.form['zones']))
         return "OK"
