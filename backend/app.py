@@ -51,10 +51,12 @@ def index():
             "%H:%M"
         )
 
-
         duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
         new_dateTime = start_dateTime + duration
-
+        
+        print(start_dateTime, new_dateTime)
+        #print(datetime(2023, 2, 18, 1))
+        
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
         interval_obj = interval(

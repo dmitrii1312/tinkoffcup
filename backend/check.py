@@ -58,6 +58,7 @@ def checkInterval(calendar_zones_objs, ievent: interval, data:list) -> tuple:
 
 def get_event(calendar, startdate, enddate):
     tasks = calendar.get_task(startdate, enddate)
+    print(tasks)
     itasks=[]
     for task in tasks:
         start = task.icalendar_component.get("DTSTART").dt
@@ -65,6 +66,6 @@ def get_event(calendar, startdate, enddate):
         itasks.append(interval(start,end,calendar))
     return  itasks
 
-if __name__ == '__main__':
-    testevent = interval(datetime(2023,4,15,14,00,00),datetime(2023,4,15,14,30,00),"zone1")
-    print(checkInterval(testevent))
+# if __name__ == '__main__':
+#     testevent = interval(datetime(2023,4,15,14,00,00),datetime(2023,4,15,14,30,00),"zone1")
+#     print(checkInterval(testevent))
