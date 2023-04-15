@@ -1,5 +1,5 @@
 import caldav
-import datetime
+from datetime import datetime
 
 class CalendarZone:
 
@@ -8,6 +8,7 @@ class CalendarZone:
         self.sUrl, self.sUsername, self.sPassword = sUrl, sUsername, sPassword
         client = caldav.DAVClient(sUrl, username=sUsername, password=sPassword)
         self.principal = client.principal()
+        self.calendar = self.principal.calendar(name=calendarName)    
 
         if calendarName is not None:
             # Check that calendar already exists
@@ -33,7 +34,7 @@ class CalendarZone:
             summary=summary,
         )
 
-    def get_task(self, start=datetime, end=datetime):
+    def get_task(self, start, end):
         tasks = self.calendar.search(
             start=start,
             end=end,
@@ -54,5 +55,4 @@ class CalendarZone:
         if end:
             event.icalendar_component["dtend"].dt = end
         event.save()
-
 
