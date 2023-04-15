@@ -46,5 +46,14 @@ class CalendarZone:
         event.delete
         return
 
+    def modify_task(self, event, summary, start, end):
+        if summary:
+            event.icalendar_component["summary"] = summary
+        if start:
+            event.icalendar_component["dtstart"].dt = start
+        if end:
+            event.icalendar_component["dtend"].dt = end
+        event.save()
+
 obj = CalendarZone("http://tsquared.keenetic.pro:5232/", 'admin', 'admin')
 obj.get_existing_cals()
