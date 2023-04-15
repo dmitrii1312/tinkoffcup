@@ -1,17 +1,20 @@
 {
     "calForZones": {
-        "zone1": "http://..../zone1.icsv",
-        "zone2": "http://..../zone2.icsv",
-        "zone3": "http://..../zone3.icsv"
+        "zone1": "http://tsquared.keenetic.pro:5232/admin/185ba9bd-0efc-3285-3a68-98ae7ed508d5/",
+        "zone2": "http://tsquared.keenetic.pro:5232/admin/a5dd7de0-eeb4-4c97-fd62-dc6e910a6c8f/",
+        "zone3": "http://tsquared.keenetic.pro:5232/admin/c01761af-4937-fad1-375b-30723e191678/",
+        "zone4": "http://tsquared.keenetic.pro:5232/admin/413a4943-7f76-3fa3-09eb-fe4b5f39a3e3/"
     },
 
     "white": {
-        "zone1": ["time1_start-time1_end", "time2_start-time2_end"],
-        "zone2": ["time1_start-time1_end", "time2_start-time2_end"]
+        "zone1": ["1-4", "5-8"],
+        "zone2": ["2-5", "6-9"],
+        "zone3": ["1-9"],
+	"zone4": ["1-9"]
     },
 
     "black": ["zone3", "zone4"],
-    "zoneAvailable": "10",
+    "zoneAvailable": "2",
     "timeouts": {
         "zone1": "15m",
         "zone2": "10m"
