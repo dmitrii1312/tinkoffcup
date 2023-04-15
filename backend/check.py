@@ -26,14 +26,14 @@ def checkBlacklistzone(calendar,zonelist):
 
 # @params:
 # interval, data = json_full_config
-def checkInterval(ievent: interval, data:list) -> tuple:    
+def checkInterval(calendar_zones_objs, ievent: interval, data:list) -> tuple:    
 
     zones = list(data['calForZones'].keys())
     blackList = data['black']
 
     im = []
     for zone in zones:
-        im.append(get_event(zone, ievent.start, ievent.end))
+        im.append(get_event(calendar_zones_objs[zone], ievent.start, ievent.end))
 
     isFreeInZone = True        
     countFreeZone = 0 

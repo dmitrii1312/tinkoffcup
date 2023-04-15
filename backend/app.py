@@ -58,7 +58,7 @@ def index():
             str(request.form['zones']),)
 
         # И делаем чек для этого интервала
-        checkInterval(interval_obj, json_config_data)
+        checkInterval(calendar_zones_objs, interval_obj, json_config_data)
 
         print(start_dateTime, end_time, str(request.form['zones']))
         return "OK"
