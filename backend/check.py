@@ -1,5 +1,7 @@
 from datetime import datetime
 from interval import interval
+from calendar_zone import CalendarZone
+from icalendar import Event
 
 import json
 import os.path as path
@@ -15,9 +17,12 @@ def checkCalendarsForZones() -> dict:
         data=json.load(json_file)    
     return data['black']
 
+# возвращаем свободно ли в требуемой зоне и в скольки зонах есть места
 def checkInterval(ievent):    
-    im = [  [interval(datetime(2023,4,15,15,00,00),datetime(2023,4,15,15,30,00),"zone1"),interval(datetime(2023,4,15,17,00,00),datetime(2023,4,15,17,30,00),"zone1")],
-            [interval(datetime(2023,4,15,10,00,00),datetime(2023,4,15,10,30,00),"zone2"),interval(datetime(2023,4,15,16,00,00),datetime(2023,4,15,17,30,00),"zone2")]]
+    zones = getZones()
+    im = []
+    for zone in zones:
+        im.append(get_event(zone,datetime(2023,4,15,0,0,0),datetime(2023,4,15,23,25,0)))
     blackList = getBlackZone()
     isFreeInZone = True        
     countFreeZone = 0 
@@ -25,14 +30,13 @@ def checkInterval(ievent):
     for izone in im:
         iFreeInZone = True
         for i in izone:
-            if (ievent.start>=i.start and ievent.start<i.end) or (ievent.end>i.start and ievent.end<=i.end) or blackList.count(i.zone)>0:
+            if (ievent.start.timestamp()>=i.start.timestamp() and ievent.start.timestamp()<i.end.timestamp()) or (ievent.end.timestamp()>i.start.timestamp() and ievent.end.timestamp()<=i.end.timestamp()) or blackList.count(i.zone)>0:
                 iFreeInZone = False
                 if i.zone == ievent.zone:
                     isFreeInZone = iFreeInZone
                 break
         if iFreeInZone:
             countFreeZone +=1
-
     return (isFreeInZone,countFreeZone)
 
 def getBlackZone() -> list:
@@ -40,5 +44,24 @@ def getBlackZone() -> list:
         data=json.load(json_file)    
     return data['black']
 
+def getZones() -> list:
+    with open(config_path, 'r') as json_file:
+        data=json.load(json_file)    
+    return data['calForZones']
+
+def get_event(calname,startdate,enddate):
+    url = "http://188.143.142.181:5232/"
+    username = "admin"
+    password = "admin"
+    calendar = CalendarZone (url,username,password,calname)
+    tasks = calendar.get_task(startdate,enddate)
+    itasks=[]
+    for task in tasks:
+        start = task.icalendar_component.get("DTSTART").dt
+        end = task.icalendar_component.get("DTEND").dt
+        itasks.append(interval(start,end,calendar))
+    return  itasks
+
 if __name__ == '__main__':
-    print(checkInterval(interval(datetime(2023,4,15,14,00,00),datetime(2023,4,15,14,30,00),"zone1")))
+    testevent = interval(datetime(2023,4,15,14,00,00),datetime(2023,4,15,14,30,00),"zone1")
+    print(checkInterval(testevent))
