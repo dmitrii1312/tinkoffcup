@@ -1,5 +1,7 @@
 {
     "caldav_server": "http://tsquared.keenetic.pro:5232",
+    "username": "admin",
+    "password": "admin",
     "calForZones": {
         "zone1": "tinkoff",
         "zone2": "tinkoff2",
