@@ -50,7 +50,11 @@ def checkInterval(calendar_zones_objs, ievent: interval, data:list) -> tuple:
                 break
         if iFreeInZone:
             countFreeZone +=1
-    return (isFreeInZone, countFreeZone)
+
+        if iFreeInZone and countFreeZone > int(data['zoneAvailable']):
+            return True
+        else:
+            return False
 
 def get_event(calendar, startdate, enddate):
     tasks = calendar.get_task(startdate, enddate)

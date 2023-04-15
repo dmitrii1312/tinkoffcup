@@ -51,14 +51,23 @@ def index():
             "%H:%M"
         )
 
+
+        
         # Если со временем всё ок, создаем объект интервала
+        entered_zone = str(request.form['zones'])
         interval_obj = interval(
             start_dateTime,
             end_time,
-            str(request.form['zones']),)
+            entered_zone)
 
         # И делаем чек для этого интервала
-        checkInterval(calendar_zones_objs, interval_obj, json_config_data)
+        check_data = \
+            checkInterval(calendar_zones_objs, interval_obj, json_config_data)
+
+        if check_data:
+            calendar_zones_objs[entered_zone].add_task(
+                interval_obj.start,
+                interval_obj.end)
 
         print(start_dateTime, end_time, str(request.form['zones']))
         return "OK"
