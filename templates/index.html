@@ -20,11 +20,15 @@
         <br><br>
 
         <label for="deadline">Дедлайн:</label>
-          <input type="deadline" id="deadline" name="deadline" required>
+          <input type="date" id="deadline" name="deadline" required>
         <br><br>
 
-        <label for="zones">Список зон доступности, в которых будут проводиться работы:</label>
-          <input type="zones" id="zones" name="zones" required>
+        <label for="zones">Зона доступности:</label>
+          <select id="zones" name="zones">
+            {% for option in data.zones %}
+              <option value="{{ option }}">{{ option }}</option>
+            {% endfor %}
+          </select>
         <br><br>
 
         <label for="typeofWork">Тип работ:</label>
