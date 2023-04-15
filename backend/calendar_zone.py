@@ -55,5 +55,4 @@ class CalendarZone:
             event.icalendar_component["dtend"].dt = end
         event.save()
 
-obj = CalendarZone("http://tsquared.keenetic.pro:5232/", 'admin', 'admin')
-obj.get_existing_cals()
+
