@@ -8,8 +8,8 @@ class CalendarZone:
         self.sUsername = sUsername
         self.sPassword = sPassword
         client = caldav.DAVClient(sUrl, username=sUsername, password=sPassword)
-        self.calendar = client.principal().calendar(name=calendarName)
-
+        self.principal = client.principal()
+        self.calendar = self.principal.calendar(name=calendarName)
 
 
     def add_task(self, start=datetime, end=datetime, summary=""):
@@ -33,7 +33,8 @@ class CalendarZone:
         return
 
 
-
+    def get_existing_cals(self):
+        return self.principal.calendars()
 
 
 
