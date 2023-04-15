@@ -1,0 +1,19 @@
+{
+    "calForZones": {
+        "zone1": "http://..../zone1.icsv",
+        "zone2": "http://..../zone2.icsv",
+        "zone3": "http://..../zone3.icsv"
+    },
+
+    "white": {
+        "zone1": ["time1_start-time1_end", "time2_start-time2_end"],
+        "zone2": ["time1_start-time1_end", "time2_start-time2_end"]
+    },
+
+    "black": ["zone3", "zone4"],
+    "zoneAvailable": "10",
+    "timeouts": {
+        "zone1": "15m",
+        "zone2": "10m"
+    }
+}
