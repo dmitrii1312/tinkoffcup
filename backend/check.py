@@ -6,18 +6,24 @@ from icalendar import Event
 import json
 import os.path as path
 
-# Ищем и проверяем существование конфига в корне проекта
-config_path = path.abspath(path.join(__file__ ,"../../config.json"))
-if not path.exists(config_path):
-    print("Config file doesn't exists")
+## Ищем и проверяем существование конфига в корне проекта
+#config_path = path.abspath(path.join(__file__ ,"../../config.json"))
+#if not path.exists(config_path):
+#    print("Config file doesn't exists")
 
 # Метод валидации статического конфиг-файла на наличие календарей и зон
-def checkCalendarsForZones() -> dict:
-    with open(config_path) as json_file:
-        data=json.load(json_file)    
-    return data['black']
+#def checkCalendarsForZones() -> dict:
+#    with open(config_path) as json_file:
+#        data=json.load(json_file)    
+#    return data['black']
 
 # возвращаем свободно ли в требуемой зоне и в скольки зонах есть места
+def checkBlacklistzone(calendar,zonelist):
+    for i in zonelist:
+        if calendar.name==i:
+            return True
+    return False
+
 def checkInterval(ievent):    
     zones = getZones()
     im = []
