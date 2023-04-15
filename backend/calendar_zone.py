@@ -14,9 +14,7 @@ class CalendarZone:
             calendars = self.principal.calendars()
             calendarName = next((calendar for calendar in calendars if calendar.name == calendarName), None)
             if calendarName is None:
-                raise Exception("Calendar doesn't exists")
-            # no need replaced by add_calendar() self.calendar = self.principal.calendar(name=calendarName)
-
+               raise Exception("Calendar doesn't exists")
 
     def get_existing_cals(self):
         return self.principal.calendars()
@@ -49,4 +47,4 @@ class CalendarZone:
         return
 
 obj = CalendarZone("http://tsquared.keenetic.pro:5232/", 'admin', 'admin')
-print(obj.get_existing_cals())
+obj.get_existing_cals()
