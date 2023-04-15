@@ -3,14 +3,25 @@ import datetime
 
 class CalendarZone:
 
-    def __init__(self, sUrl, sUsername, sPassword, calendarName ):
-        self.sUrl = sUrl
-        self.sUsername = sUsername
-        self.sPassword = sPassword
+    def __init__(self, sUrl, sUsername, sPassword, calendarName=None ):
+
+        self.sUrl, self.sUsername, self.sPassword = sUrl, sUsername, sPassword
         client = caldav.DAVClient(sUrl, username=sUsername, password=sPassword)
         self.principal = client.principal()
-        self.calendar = self.principal.calendar(name=calendarName)
 
+        if calendarName is not None:
+            self.calendar = self.principal.calendar(name=calendarName)
+
+
+    def get_existing_cals(self):
+        return self.principal.calendars()
+
+    def add_calendar(self, name):
+        calendars = self.get_existing_cals()
+        if name not in calendars:
+            caldav.CalendarSet.make_calendar(
+                name=name
+            )
 
     def add_task(self, start=datetime, end=datetime, summary=""):
         event = self.calendar.save_event(
@@ -33,10 +44,9 @@ class CalendarZone:
         return
 
 
-    def get_existing_cals(self):
-        return self.principal.calendars()
 
 
 
 
-
+obj = CalendarZone("http://tsquared.keenetic.pro:5232/", 'admin', 'admin')
+print(CalendarZone.get_existing_cals())
