@@ -51,9 +51,9 @@ class CalendarZone:
         return tasks
 
 
-    def del_task(self, event:caldav.Event):
-        event.delete
-        return
+    def del_task(self, events:caldav.Event):
+        for event in events:
+            event.delete()
 
     def modify_task(self, event, summary, start, end):
         if summary:
