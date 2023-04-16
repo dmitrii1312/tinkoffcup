@@ -48,9 +48,9 @@
         <label for="workInterval">Итервал проведения работ:</label>
         <select id="workInterval" name="workInterval">
             <option value="once">один раз</option>
-            <option value="everyWeek">каждый день</option>
-            <option value="everyDay">каждую неделю</option>
-            <option value="everyMonth">каждый месяц</option>
+            <option value="daily">каждый день</option>
+            <option value="weekly">каждую неделю</option>
+            <option value="monthly">каждый месяц</option>
         </select>
       <br><br>
       </div>
@@ -60,14 +60,5 @@
   </form>
   <footer>
   </footer>
-
-  <!-- <script>
-    document.querySelector('form').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const duration = document.getElementById('durationTime');
-        if (!duration.checkValidity())
-            alert('Valid time format: ' + duration.value);
-    });
-</script> -->
 </body>
 </html>
