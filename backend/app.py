@@ -39,8 +39,10 @@ for i in zones:
 @app.route('/', methods=['GET', 'POST'])
 def index():
     data = {
-        'zones': list(calendar_zones_objs.keys())
+        'zones': list(calendar_zones_objs.keys()),
+        'calLink': json_config_data['webcal_server']
     }
+
     if request.method == 'POST':
         # Получаем дату старта и время
         start_dateTime = datetime.strptime(
@@ -68,12 +70,11 @@ def index():
         check_data = \
             checkInterval(calendar_zones_objs, interval_obj, json_config_data)
 
-        print(check_data)
         if check_data:
             calendar_zones_objs[entered_zone].add_task(
                 interval_obj.start,
                 interval_obj.end)
-            return "Data has been added"
+            return render_template('data_added.html', data=data)
         else:
             return "Add data failed"
     else:
