@@ -28,11 +28,19 @@ class CalendarZone:
             )
 
     def add_task(self, start=datetime, end=datetime, summary="", repeat="once", priority="2", tasttype="auto" ):
-        event = self.calendar.save_event(
-            dtstart=start,
-            dtend=end,
-            summary=summary,
-        )
+        if repeat != "once":
+            event = self.calendar.save_event(
+                dtstart=start,
+                dtend=end,
+                summary=summary,
+                rrule={'FREQ': repeat}
+            )
+        else:
+            event = self.calendar.save_event(
+                    dtstart=start,
+                    dtend=end,
+                    summary=summary
+            )
 
     def get_task(self, start, end):
         tasks = self.calendar.search(
