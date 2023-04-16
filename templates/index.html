@@ -33,7 +33,6 @@
 
         <label for="typeofWork">Тип работ:</label>
           <select id="typeofWork" name="typeofWork">
-            <option value="null">...</option>
             <option value="auto">автоматические</option>
             <option value="handmade">ручные</option>
           </select>
@@ -41,17 +40,27 @@
 
         <label for="workPriority">Приоритет работ:</label>
           <select id="workPriority" name="workPriority">
-            <option value="null">...</option>
             <option value="general">обычные</option>
             <option value="critical">критические</option>
           </select>
         <br><br>
+
+        <label for="workInterval">Итервал проведения работ:</label>
+        <select id="workInterval" name="workInterval">
+            <option value="once">один раз</option>
+            <option value="everyWeek">каждый день</option>
+            <option value="everyDay">каждую неделю</option>
+            <option value="everyMonth">каждый месяц</option>
+        </select>
+      <br><br>
       </div>
       <input type="submit" value="Отправить">
     </form>
   </div>
   </form>
-  <footer></footer>
+  <footer>
+    <a>{{ data.callink }}</a>
+  </footer>
 
   <!-- <script>
     document.querySelector('form').addEventListener('submit', (event) => {

@@ -38,6 +38,9 @@ for i in zones:
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    data = {
+        'zones': list(calendar_zones_objs.keys())
+    }
     if request.method == 'POST':
         # Получаем дату старта и время
         start_dateTime = datetime.strptime(
@@ -70,17 +73,11 @@ def index():
             calendar_zones_objs[entered_zone].add_task(
                 interval_obj.start,
                 interval_obj.end)
-            return "OK after checkdata"
+            return "Data has been added"
         else:
-            return "HUITA"
-
-        print(start_dateTime, end_time, str(request.form['zones']))
-        return "OK"
-
+            return "Add data failed"
     else:
-        data = {
-            'zones': list(calendar_zones_objs.keys())
-        }
+
         return render_template('index.html', data=data)
 
 if __name__ == '__main__':
