@@ -51,7 +51,7 @@ def checkInterval(calendar_zones_objs, ievent: interval, data:list) -> tuple:
         if iFreeInZone:
             countFreeZone +=1
 
-    if iFreeInZone and countFreeZone > int(data['zoneAvailable']):
+    if isFreeInZone and countFreeZone > int(data['zoneAvailable']):
         return True
     else:
         return False
