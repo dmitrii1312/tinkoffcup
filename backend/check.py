@@ -18,12 +18,30 @@ import os.path as path
 #    return data['black']
 
 # возвращаем свободно ли в требуемой зоне и в скольки зонах есть места
-def checkBlacklistzone(calendar,zonelist):
-    for i in zonelist:
-        if calendar.name==i:
+def checkBlacklist(zonename, blackzonelist):
+    for i in blackzonelist:
+        if zonename==i:
             return True
     return False
 
+def checkWhitelist(whitelist, start, duration):
+    nHstart=int(start.strftime("%H"))
+    dtHend=start+duration
+    nHend=int(dtHend.strftime("%H"))+1
+    for i in whitelist:
+        sParts=i.partition("-")
+        nIntStart=int(sParts[0])
+        nIntEnd=int(sParts[2])
+        if nHstart>nIntStart and nHend<nIntEnd:
+            return True
+    return False
+
+def countWorksInInterval(calendar, start, duration):
+    end=start+duration
+    return calendar.get_task(start, end)
+
+def countAvailableZonesInInterval(calendars, start, duration):
+    return 0
 # @params:
 # interval, data = json_full_config
 def checkInterval(calendar_zones_objs, ievent: interval, data:list) -> tuple:    

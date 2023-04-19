@@ -84,7 +84,8 @@ def index():
 
         duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
         new_dateTime = start_dateTime + duration
-                
+        worktype = str(request.form['worktype'])
+        deadline = datetime.strptime(str(request.form['deadline']), "%Y-%m-%dT")      
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
         interval_obj = interval(
@@ -93,6 +94,13 @@ def index():
             entered_zone)
 
         # И делаем чек для этого интервала
+        if checkBlacklist(entered_zone, blacklist):
+            return "Zone in blacklist"
+        if deadline<new_dateTime:
+            return "Deadline too early"
+
+
+
         check_data = \
             checkInterval(calendar_zones_objs, interval_obj, json_config_data)
 
