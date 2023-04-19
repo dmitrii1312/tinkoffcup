@@ -16,16 +16,19 @@ from interval import interval
 # Start app
 app = Flask(__name__, template_folder='../templates')
 
-### READ CONFIG JSON ###
+
+
+
+# READ CONFIG JSON
 # Ищем и проверяем существование конфига в корне проекта
 print("Opening config file")
-config_path = path.abspath(path.join(__file__ ,"../../config.json"))
+config_path = path.abspath(path.join(__file__, "../../config.json"))
 if not path.exists(config_path):
     print("Config file doesn't exists")
 print("Reading config")
 # Получаем весь конфиг
 try:
-    with open(config_path,'r') as json_config:
+    with open(config_path, 'r') as json_config:
         json_config_data = json.load(json_config)
 except ValueError:
     raise Exception("Errors in config file") from None
@@ -61,7 +64,7 @@ for i in zones.keys():
         raise Exception("Pause time set not for all zones")
 
 ### READ CONFIG JSON ###
-
+1) Атрибуты начало, длительность
 @app.route('/', methods=['GET', 'POST'])
 def index():
     data = {
@@ -99,10 +102,9 @@ def index():
         if deadline<new_dateTime:
             return "Deadline too early"
 
-
-
-        check_data = \
-            checkInterval(calendar_zones_objs, interval_obj, json_config_data)
+        check_data = checkInterval(calendar_zones_objs,
+                                   interval_obj,
+                                   json_config_data)
 
         if check_data:
             calendar_zones_objs[entered_zone].add_task(
