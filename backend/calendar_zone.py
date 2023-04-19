@@ -1,9 +1,10 @@
 import caldav
 from datetime import datetime
 
+
 class CalendarZone:
 
-    def __init__(self, sUrl, sUsername, sPassword, calendarName=None ):
+    def __init__(self, sUrl, sUsername, sPassword, calendarName=None):
 
         self.sUrl, self.sUsername, self.sPassword = sUrl, sUsername, sPassword
         client = caldav.DAVClient(sUrl, username=sUsername, password=sPassword)
@@ -15,7 +16,7 @@ class CalendarZone:
             calendars = self.principal.calendars()
             calendarName = next((calendar for calendar in calendars if calendar.name == calendarName), None)
             if calendarName is None:
-               raise Exception("Calendar doesn't exists")
+                raise Exception("Calendar doesn't exists")
 
     def get_existing_cals(self):
         return self.principal.calendars()
@@ -27,20 +28,23 @@ class CalendarZone:
                 name=name
             )
 
-    def add_task(self, start=datetime, end=datetime, summary="", repeat="once", priority="2", tasttype="auto" ):
+    def add_task(self, start=datetime, end=datetime,
+                 summary="", repeat="once", priority="2",
+                 tasttype="auto"):
+
+        event = {}
+
         if repeat != "once":
             event = self.calendar.save_event(
                 dtstart=start,
                 dtend=end,
                 summary=summary,
-                rrule={'FREQ': repeat}
-            )
+                rrule={'FREQ': repeat})
         else:
             event = self.calendar.save_event(
                     dtstart=start,
                     dtend=end,
-                    summary=summary
-            )
+                    summary=summary)
 
     def get_task(self, start, end):
         tasks = self.calendar.search(
@@ -50,8 +54,7 @@ class CalendarZone:
         )
         return tasks
 
-
-    def del_task(self, events:caldav.Event):
+    def del_task(self, events: caldav.Event):
         for event in events:
             event.delete()
 
@@ -63,4 +66,3 @@ class CalendarZone:
         if end:
             event.icalendar_component["dtend"].dt = end
         event.save()
-
