@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 from datetime import datetime, timedelta
 import os.path as path
-import time
 import json
 
 # Our api
@@ -15,9 +14,6 @@ from interval import interval
 
 # Start app
 app = Flask(__name__, template_folder='../templates')
-
-
-
 
 # READ CONFIG JSON
 # Ищем и проверяем существование конфига в корне проекта
@@ -63,8 +59,8 @@ for i in zones.keys():
     except KeyError:
         raise Exception("Pause time set not for all zones")
 
-### READ CONFIG JSON ###
-1) Атрибуты начало, длительность
+
+# READ CONFIG JSON
 @app.route('/', methods=['GET', 'POST'])
 def index():
     data = {
