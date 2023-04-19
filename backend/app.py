@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from datetime import datetime, timedelta
 import os.path as path
 import time
+import json
 
 # Our api
 from calendar_zone import CalendarZone
@@ -17,22 +18,47 @@ app = Flask(__name__, template_folder='../templates')
 
 ### READ CONFIG JSON ###
 # Ищем и проверяем существование конфига в корне проекта
+print("Opening config file")
 config_path = path.abspath(path.join(__file__ ,"../../config.json"))
 if not path.exists(config_path):
     print("Config file doesn't exists")
-
+print("Reading config")
 # Получаем весь конфиг
-json_config_data = get_all_config(config_path)
+try:
+    with open(config_path,'r') as json_config:
+        json_config_data = json.load(json_config)
+except ValueError:
+    raise Exception("Errors in config file") from None
 
 remote_server = json_config_data['caldav_server']
 username = json_config_data['username']
 password = json_config_data['password']
 zones = json_config_data['calForZones']
+nFreeZones = int(json_config_data['zoneAvailable'])
+whitelist = json_config_data['white']
+blacklist = json_config_data['black']
+pause = json_config_data['pause']
 
 calendar_zones_objs = {}
 for i in zones:
     calendar_zones_objs[i] = \
         CalendarZone(remote_server, username, password, zones[i])
+
+for i in zones.keys():
+    try:
+        whitelist[i]
+    except KeyError:
+        raise Exception("White list not for all zones")
+
+i=len(zones)-len(blacklist)
+if i<nFreeZones:
+    raise Exception("Incorrect number of available zones: no zones to schedule works")
+
+for i in zones.keys():
+    try:
+        pause[i]
+    except KeyError:
+        raise Exception("Pause time set not for all zones")
 
 ### READ CONFIG JSON ###
 
