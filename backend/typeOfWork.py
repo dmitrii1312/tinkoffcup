@@ -1,8 +1,6 @@
-import string
 from dataclasses import dataclass
 from datetime import datetime
 import time
-from typing import Type, List
 
 
 # тайм зоны беда, сдвиг на два часа + таймзону в конфиг
