@@ -32,11 +32,11 @@ start_dateTime + end_time = delta
 """
 
 
-def duration_job(self, min_time=time, max_time=time) -> bool | Exception:
+def duration_job(self, min_time=time, max_time=time) -> bool:
     if self.duration <= min_time.time():
-        return Exception("Duration time is not compatible with minimal time")
+        return False
     elif self.duration > max_time.time():
-        return Exception("Duration time is not compatible with maximum time")
+        return False
     else:
         return True
 
