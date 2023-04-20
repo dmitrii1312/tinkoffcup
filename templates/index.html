@@ -3,12 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scheduling events</title>
-  <!-- <script src="{{ url_for('static', filename='ajax.js') }}"></script> -->
+  <title>Планировщик задач</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
   <script>
     var configData = JSON.parse({{ config_app|tojson }});
-    // Обработать конфигурацию хз, пока надо ли... Возможно надо всё в бэк
     console.log(configData);
 </script>
 </head>
@@ -53,21 +51,10 @@
               <option value="critical">критические</option>
             </select>
 
-          <!-- <label for="workInterval">Итервал проведения работ:</label>
-          <select id="workInterval" name="workInterval">
-              <option value="once">один раз</option>
-              <option value="daily">каждый день</option>
-              <option value="weekly">каждую неделю</option>
-              <option value="monthly">каждый месяц</option>
-          </select> -->
-
         </div>
         <input type="submit" value="Отправить">
       </form>
     </div>
-    </form>
   </main>
-  <!-- <footer>
-  </footer> -->
 </body>
 </html>
