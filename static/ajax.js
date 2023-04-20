@@ -8,5 +8,5 @@
 //         console.error(error);
 //     });
 
-var configData = JSON.parse("{{ config_app|safe }}");
-console.log(configData);
+// var configData = JSON.parse("{{ config_app|safe }}");
+// console.log(configData);

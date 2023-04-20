@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Планировщик задач</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-  <script>
-    var configData = JSON.parse({{ config_app|tojson }});
-    console.log(configData);
-</script>
 </head>
 <body>
   <header>Планировщик задач 1.0</header>
@@ -24,7 +20,7 @@
       <form action="/" method="post">
         <div class="inputs">
           <label for="startTime">Дата и время начала работ:</label>
-            <input type="datetime-local" id="startTime" name="startTime" step="1" lang="ru-RU" format-value="yyyy-MM-ddTHH:mm" required>
+            <input type="datetime-local" id="startTime" name="startTime" required>
 
           <label for="durationTime">Длительность работ:</label>
             <input type="datetime-local" id="durationTime" name="durationTime"  required>
