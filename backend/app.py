@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timedelta
 import os.path as path
 import json
@@ -13,7 +13,14 @@ from interval import interval
 
 
 # Start app
-app = Flask(__name__, template_folder='../templates')
+app = Flask(__name__,
+            template_folder='../templates',
+            static_folder='../static')
+
+
+# app.add_url_rule('/static/ajax.js',
+#                  endpoint='static',
+#                  view_func=app.send_static_file)
 
 # READ CONFIG JSON
 # Ищем и проверяем существование конфига в корне проекта
@@ -49,20 +56,21 @@ for i in zones.keys():
     except KeyError:
         raise Exception("White list not for all zones")
 
-i=len(zones)-len(blacklist)
-if i<nFreeZones:
+i = len(zones)-len(blacklist)
+if i < nFreeZones:
     raise Exception("Incorrect number of available zones: no zones to schedule works")
 
-for i in zones.keys():
-    try:
-        pause[i]
-    except KeyError:
-        raise Exception("Pause time set not for all zones")
+# for i in zones.keys():
+#     try:
+#         pause[i]
+#     except KeyError:
+#         raise Exception("Pause time set not for all zones")
 
 
 # READ CONFIG JSON
 @app.route('/', methods=['GET', 'POST'])
 def index():
+
     data = {
         'zones': list(calendar_zones_objs.keys()),
         'calLink': json_config_data['webcal_server']
@@ -110,8 +118,11 @@ def index():
         else:
             return "Add data failed"
     else:
+        config_app = jsonify(json_config_data).data.decode('utf-8')
+        return render_template('index.html',
+                               data=data,
+                               config_app=config_app)
 
-        return render_template('index.html', data=data)
 
 if __name__ == '__main__':
     app.run(debug=True)
