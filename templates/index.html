@@ -10,14 +10,19 @@
   <header>Планировщик задач 1.0</header>
   <nav>
     <ul>
+      <li><a href="/">Планировщик</a></li>
       <li><a href="#">Информация</a></li>
-      <li><a href="#">Планировщик</a></li>
     </ul>
     <button class="logout">Выход</button>
   </nav>
   <main>
     <div class="body">
       <form action="/" method="post">
+
+        {% if error_message %}
+          <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+        {% endif %}
+
         <div class="inputs">
           <label for="startTime">Дата и время начала работ:</label>
             <input type="datetime-local" id="startTime" name="startTime" required>

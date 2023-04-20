@@ -28,7 +28,9 @@ class CalendarZone:
                 name=name
             )
 
-    def add_task(self, start: datetime, end: datetime, summary="", repeat="once", priority="2", tasktype="auto", deadline: datetime):
+    def add_task(self, start: datetime, end: datetime,
+                 summary="", repeat="once", priority="2",
+                 tasktype="auto", deadline: datetime = 0):
         if repeat != "once":
             event = self.calendar.save_event(
                 dtstart=start,

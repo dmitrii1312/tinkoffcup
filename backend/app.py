@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 from datetime import datetime, timedelta
 import os.path as path
 import json
+import time
 
 # Our api
 from calendar_zone import CalendarZone
@@ -16,17 +17,12 @@ from autoWork import autoWork
 from manualWork import manualWork 
 from typeOfWork import typeOfWork
 
-# Start app
+# Start Flask application
 app = Flask(__name__,
             template_folder='../templates',
             static_folder='../static')
 
 
-# app.add_url_rule('/static/ajax.js',
-#                  endpoint='static',
-#                  view_func=app.send_static_file)
-
-# READ CONFIG JSON
 # Ищем и проверяем существование конфига в корне проекта
 config_path = path.abspath(path.join(__file__, "../../config.json"))
 if not path.exists(config_path):
@@ -82,6 +78,9 @@ data = {
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
+    # Для обработки ошибок на фронте при рендеринге
+    error_message = None
+
     if request.method == 'POST':
 
         # Дата и время начала работ
@@ -118,19 +117,19 @@ def index():
         if worktype == 'auto':
             # Для минимальных работ
             if minMax_duration < parse_timedelta(min_time[worktype]):
-                print(f"Error auto work can't be less"
-                      f"than {min_time[worktype]}")
+                error_message = (f"Ошибка, автоматические работы не могут "
+                                 f"быть меньше {min_time[worktype]}")
         elif worktype == 'manual':
             if minMax_duration < parse_timedelta(min_time[worktype]):
-                print(f"Error handmade work can't be less"
-                      f"than {min_time[worktype]}")
+                error_message = (f"Ошибка, ручные работы не могут быть "
+                                 f"меньше {min_time[worktype]}")
 
         # Провека для ОБЫЧНЫХ максимальных работ
         if workPriority == 'normal':
             if (minMax_duration >
                parse_timedelta(max_time[worktype][workPriority])):
-                print(f"Error maximal duration can't be greather"
-                      f"than {max_time[worktype][workPriority]}")
+                error_message = (f"Ошибка, максимальное время не может быть "
+                                 f"больше {max_time[worktype][workPriority]}")
 
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
@@ -146,35 +145,37 @@ def index():
         #     return "Deadline too early"
 
         # Creating Object
-        current_task = typeOfWork(worktype)
-        res, text = current_task.set_start_time(start_dateTime)
-        if not res:
-            return text
-        res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][priority])
-        if not res:
-            return text
-        res, text = current_task.set_end_time(current_task.calculate_end_time())
-        if not res:
-            return text
-        res, text = current_task.set_deadline(deadline)
-        if not res:
-            return text
-        res, text = current_task.set_priority(priority)
-        if not res:
-            return text
-        res, text = current_task.set_zone_name(entered_zone)
-        if not res:
-            return text
-        # triing to save task object
-        res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
-        if res:
-            return render_template('data_added.html', data=data)
-        else:
-            return "task conflict"
-    else:
-        # config_app = jsonify(json_config_data).data.decode('utf-8')
-        return render_template('index.html', data=data)
-    # return render_template('index.html', data=data)
+        # current_task = typeOfWork(worktype)
+        # res, text = current_task.set_start_time(start_dateTime)
+        # if not res:
+        #     return text
+        # res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][priority])
+        # if not res:
+        #     return text
+        # res, text = current_task.set_end_time(current_task.calculate_end_time())
+        # if not res:
+        #     return text
+        # res, text = current_task.set_deadline(deadline)
+        # if not res:
+        #     return text
+        # res, text = current_task.set_priority(priority)
+        # if not res:
+        #     return text
+        # res, text = current_task.set_zone_name(entered_zone)
+        # if not res:
+        #     return text
+        # # triing to save task object
+        # res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
+        # if res:
+        #     return render_template('data_added.html',
+        #                            data=data,
+        #                            error_message=error_message)
+        # else:
+        #     error_message = "task conflict"
+
+    return render_template('index.html',
+                           data=data,
+                           error_message=error_message)
 
 
 if __name__ == '__main__':

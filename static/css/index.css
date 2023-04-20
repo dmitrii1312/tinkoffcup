@@ -129,6 +129,10 @@ main {
     margin-bottom: 2rem;
 }
 
+.alert {
+    background-color: #f44336;
+    color: black;
+}
 .form-image {
     width: 100%;
     max-width: 600px;
