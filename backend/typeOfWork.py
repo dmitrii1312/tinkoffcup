@@ -5,7 +5,7 @@ import time
 
 # тайм зоны беда, сдвиг на два часа + таймзону в конфиг
 @dataclass
-class TypeOfWork:
+class typeOfWork:
     start_time: datetime  # Начало работ дата + время
     end_time: datetime  # Конец работ, только время
     duration_time: datetime.time()  # Продолжительность работ
@@ -32,10 +32,11 @@ start_dateTime + end_time = delta
 + 
 вопрос: У нас  минимальное время и максимальное это константы?
 """
-    def __init__(self, work_type):
+    def __init__(self, work_type:str):
         self.work_type = work_type
         self.duration = -1;
 
+# set methods
     def check_duration_job(self, min_time=time, max_time=time):
         if self.duration <= min_time.time():
             return False, "Duration is not compatible with minimal time"
@@ -62,6 +63,10 @@ start_dateTime + end_time = delta
             self.duration_time = -1;
             return False, text
 
+    def set_end_time(self, end_time:datetime):
+        self.end_time = end_time
+        return True, "OK"
+
 
     def calculate_end_time(self):
         end_time = self.start_time + self.duration_time
@@ -82,4 +87,38 @@ start_dateTime + end_time = delta
     def set_priority(self, priority: str):
         self.priority = priority
         return True, "OK"
+
+    def set_zone_name(self, name:str):
+        self.zone_name = name
+        return True, "OK"
+
+# Get methods
+    def get_start_time(self):
+        return self.start_time
+
+
+    def get_end_time(self):
+        return self.end_time
+
+
+    def get_duration_time(self):
+        return self.duration_time
+
+
+    def get_deadline_time(self):
+        return self.deadline_time
+
+
+    def get_priority(self):
+        return self.priority
+
+
+    def get_zone_name(self):
+        return self.zone_name
+
+
+    def get_work_type(self):
+        return self.work_type
+
+
 

@@ -11,6 +11,9 @@ from parse_config import *
 from check import checkInterval
 from interval import interval
 
+from autoWork import autoWork
+from manualWork import manualWork 
+from typeOfWork import typeOfWork
 
 # Start app
 app = Flask(__name__,
@@ -42,6 +45,8 @@ nFreeZones = int(json_config_data['zoneAvailable'])
 whitelist = json_config_data['white']
 blacklist = json_config_data['black']
 pause = json_config_data['pause']
+min_time = json_config_data['min_long']
+max_time = json_config_data['max_long']
 
 calendar_zones_objs = {}
 for i in zones:
@@ -128,17 +133,34 @@ def index():
         # if deadline<new_dateTime:
         #     return "Deadline too early"
 
-        check_data = checkInterval(calendar_zones_objs,
-                                   interval_obj,
-                                   json_config_data)
-
-        if check_data:
-            calendar_zones_objs[entered_zone].add_task(
-                interval_obj.start,
-                interval_obj.end)
+        # Creating Object
+        current_task = typeOfWork(worktype)
+        res, text = current_task.set_start_time(start_dateTime)
+        if ! res:
+            return text
+        res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][priority])
+        if ! res:
+            return text
+        res, text = current_task.set_end_time(current_task.calculate_end_time())
+        if ! res:
+            return text
+        res, text = current_task.set_deadline(deadline)
+        if ! res:
+            return text
+        res, text = current_task.set_priority(priority)
+        if ! res:
+            return text
+        res, text = current_task.set_zone_name(entered_zone)
+        if ! res:
+            return text
+        # triing to save task object
+        res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
+        if res:
             return render_template('data_added.html', data=data)
         else:
-            return "Add data failed"
+            return "task conflict"
+
+        
     else:
         #config_app = jsonify(json_config_data).data.decode('utf-8')
         return render_template('index.html', data=data)
