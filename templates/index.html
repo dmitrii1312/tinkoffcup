@@ -24,13 +24,13 @@
       <form action="/" method="post">
         <div class="inputs">
           <label for="startTime">Дата и время начала работ:</label>
-            <input type="datetime-local" id="startTime" name="startTime" required>
+            <input type="datetime-local" id="startTime" name="startTime" step="1" lang="ru-RU" format-value="yyyy-MM-ddTHH:mm" required>
 
           <label for="durationTime">Длительность работ:</label>
             <input type="datetime-local" id="durationTime" name="durationTime"  required>
 
           <label for="deadline">Дедлайн:</label>
-            <input type="date" id="deadline" name="deadline" required>
+            <input type="datetime-local" id="deadline" name="deadline" required>
 
           <label for="zones">Зона доступности:</label>
             <select id="zones" name="zones">
