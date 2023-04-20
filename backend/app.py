@@ -24,11 +24,9 @@ app = Flask(__name__,
 
 # READ CONFIG JSON
 # Ищем и проверяем существование конфига в корне проекта
-print("Opening config file")
 config_path = path.abspath(path.join(__file__, "../../config.json"))
 if not path.exists(config_path):
     print("Config file doesn't exists")
-print("Reading config")
 # Получаем весь конфиг
 try:
     with open(config_path, 'r') as json_config:
