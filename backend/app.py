@@ -6,7 +6,7 @@ import json
 # Our api
 from calendar_zone import CalendarZone
 from parse_config import *
-from time_functions import *
+from time_functions import parse_timedelta
 
 # Check interval imports only
 from check import checkInterval
@@ -97,30 +97,40 @@ def index():
                                      "%Y-%m-%dT%H:%M")
 
         duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
+        new_dateTime = start_dateTime + duration
 
         # Минимальная длительность работ
-        # 09:00 + 10:00 = 1ч
-        minimal_duration = end_time - start_dateTime
-
-        new_dateTime = start_dateTime + duration
-        print(minimal_duration)
-
+        # 10:00 - 09:00 = 1ч
+        minMax_duration = end_time - start_dateTime
+        # Максимальная длительность работ
+        # 
         # Получаем тип работ (ручные, автоматические)
         worktype = str(request.form['typeofWork'])
+        workPriority = str(request.form['workPriority'])
 
         """
-            БЛОК ВАЛИДАЦИИ (Минимальная длительность)...
-                Если работы автоматические, делаем проверку, что они
-                Не меньше 5 минут.
-                Иначе, если работы ручные, тогда делаем проверку, что они
-                не меньше 30 минут.
+            Минимальная длительность работ: 5 минут для автоматических
+            и 30 минут для ручных
+
+            Максимальная длительность работ - 6 часов, для обычных работ
+            любого типа и без ограничений для критических.
         """
         if worktype == 'auto':
-            if minimal_duration < parse_timedelta(min_time[worktype]):
-                print("Error auto work can't be less than 5 minutes")
+            # Для минимальных работ
+            if minMax_duration < parse_timedelta(min_time[worktype]):
+                print(f"Error auto work can't be less"
+                      f"than {min_time[worktype]}")
         elif worktype == 'manual':
-            if minimal_duration < parse_timedelta(min_time[worktype]):
-                print("Error handmade work can't be less than 30 minutes")
+            if minMax_duration < parse_timedelta(min_time[worktype]):
+                print(f"Error handmade work can't be less"
+                      f"than {min_time[worktype]}")
+
+        # Провека для ОБЫЧНЫХ максимальных работ
+        if workPriority == 'normal':
+            if (minMax_duration >
+               parse_timedelta(max_time[worktype][workPriority])):
+                print(f"Error maximal duration can't be greather"
+                      f"than {max_time[worktype][workPriority]}")
 
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
