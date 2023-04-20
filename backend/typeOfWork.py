@@ -60,7 +60,7 @@ class typeOfWork:
         if res:
             return True, text
         else:
-            self.duration_time = -1;
+            self.duration_time = -1
             return False, text
 
     def set_end_time(self, end_time: datetime):
@@ -82,6 +82,11 @@ class typeOfWork:
             self.deadline_time = deadline
             return True, "OK"
 
+
+    def set_summary(self, summary: str):
+        self.summary = summary
+        return True, "OK"
+
     def set_priority(self, priority: str):
         self.priority = priority
         return True, "OK"
@@ -90,7 +95,7 @@ class typeOfWork:
         self.zone_name = name
         return True, "OK"
 
-# Get methods
+    # Get methods
     def get_start_time(self):
         return self.start_time
 
@@ -102,6 +107,9 @@ class typeOfWork:
 
     def get_deadline_time(self):
         return self.deadline_time
+
+    def get_summary(self):
+        return self.summary
 
     def get_priority(self):
         return self.priority

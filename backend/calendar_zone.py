@@ -1,5 +1,6 @@
 import caldav
 from datetime import datetime
+from typeOfWork import typeOfWork
 
 
 class CalendarZone:
@@ -27,7 +28,7 @@ class CalendarZone:
                 name=name
             )
 
-    def add_task(self, start=datetime, end=datetime, summary="", repeat="once", priority="2", tasktype="auto", deadline=datetime):
+    def add_task(self, start: datetime, end: datetime, summary="", repeat="once", priority="2", tasktype="auto", deadline: datetime):
         if repeat != "once":
             event = self.calendar.save_event(
                 dtstart=start,
@@ -47,6 +48,18 @@ class CalendarZone:
                 tasktype=tasktype,
                 deadline=deadline,
             )
+
+    def add_task_ex(self, type_of_work: typeOfWork):
+        self.add_task(start=type_of_work.start_time,
+                      end=type_of_work.end_time,
+                      summary=type_of_work.summary,
+                      priority=type_of_work.priority,
+                      tasktype=type_of_work.work_type,
+                      deadline=type_of_work.deadline_time)
+
+        cross_task = self.get_task(start=type_of_work.start_time,end=type_of_work.end_time)
+
+        return True,cross_task
 
     def get_task(self, start, end):
         tasks = self.calendar.search(

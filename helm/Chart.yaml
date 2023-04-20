@@ -1,0 +1,5 @@
+apiVersion: v2
+name: scheduler
+description: scheduler
+version: 1.0.0
+
