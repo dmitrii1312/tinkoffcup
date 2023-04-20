@@ -31,12 +31,8 @@ start_dateTime + end_time = delta
 вопрос: У нас  минимальное время и максимальное это константы?
 """
 
-
-def duration_job(self, min_time=time, max_time=time) -> bool:
-    if self.duration <= min_time.time():
-        return False
-    elif self.duration > max_time.time():
-        return False
-    else:
-        return True
-
+    def duration_job(self, min_time=time, max_time=time) -> bool:
+        if  min_time.time() <= self.duration > max_time.time():
+            return False
+        else:
+            return True
