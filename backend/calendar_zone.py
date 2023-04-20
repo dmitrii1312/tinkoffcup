@@ -69,16 +69,3 @@ class CalendarZone:
         if end:
             event.icalendar_component["dtend"].dt = end
         event.save()
-
-
-obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "amalyshev")
-#print(obj.get_task(datetime(2023, 2, 18, 1), datetime(2023, 8, 18, 1))[0].data)
-
-obj.add_task(
-    start=datetime(2023, 4, 19, 1),
-    end=datetime(2023, 4, 19, 5),
-    summary="test",
-    priority="10",
-    tasktype="manual")
-
-print(obj.get_task(datetime(2023, 4, 19, 1), datetime(2023, 4, 20, 1))[0].data)
