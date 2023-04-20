@@ -13,6 +13,7 @@ class typeOfWork:
     priority: str  # Приоритет работ critical or normal
     zone_name: str # название зоны
     work_type: str # тип работ
+    summary: str
 
 
 """
@@ -36,42 +37,40 @@ start_dateTime + end_time = delta
         self.work_type = work_type
         self.duration = -1;
 
-# set methods
-    def check_duration_job(self, min_time=time, max_time=time):
-        if self.duration <= min_time.time():
+    # set methods
+    def check_duration_job(self, min_time: time, max_time: time):
+        if self.duration_time <= min_time.time():
             return False, "Duration is not compatible with minimal time"
         elif self.duration > max_time.time() and max_time.time() != 0:
             return False, "Duration is not compatible with maximum time"
         else:
             return True, "Duration is compatible"
 
-    def set_start_time(self, starttime:datetime):
-        now = datetime(now)
-        if starttime < now:
+    def set_start_time(self, start_time: datetime):
+        now = datetime.now()
+        if start_time < now:
             return False, "Can't plan task in the past"
         else:
-            self.start_time=starttime
+            self.start_time = start_time
         return True, "OK"
 
-# TODO: Нужно проверить, что максимальное время не равно 0, так же нужно придумать значение, которое будет считаться некорректным(устанавливаться в случае некорректного значения длительности)
-    def set_duration(self, duration:datetime, min_time: time, max_time: time):
+    # TODO: Нужно проверить, что максимальное время не равно 0, так же нужно придумать значение, которое будет считаться некорректным(устанавливаться в случае некорректного значения длительности)
+    def set_duration(self, duration: datetime, min_time: time, max_time: time):
         self.duration_time = duration
-        res, text = check_duration_job(self, min_time, max_time)
+        res, text = self.check_duration_job(self, min_time, max_time)
         if res:
             return True, text
         else:
-            self.duration_time = -1;
+            self.duration_time = -1
             return False, text
 
-    def set_end_time(self, end_time:datetime):
+    def set_end_time(self, end_time: datetime):
         self.end_time = end_time
         return True, "OK"
 
-
     def calculate_end_time(self):
-        end_time = self.start_time + self.duration_time
+        end_time = self.start_time + self.duration
         return end_time
-
 
     def calculate_duration(self):
         duration = self.end_time - self.start_time
@@ -84,41 +83,40 @@ start_dateTime + end_time = delta
             self.deadline_time = deadline
             return True, "OK"
 
+
+    def set_summary(self, summary: str):
+        self.summary = summary
+        return True, "OK"
+
     def set_priority(self, priority: str):
         self.priority = priority
         return True, "OK"
 
-    def set_zone_name(self, name:str):
+    def set_zone_name(self, name: str):
         self.zone_name = name
         return True, "OK"
 
-# Get methods
+    # Get methods
     def get_start_time(self):
         return self.start_time
-
 
     def get_end_time(self):
         return self.end_time
 
-
     def get_duration_time(self):
         return self.duration_time
-
 
     def get_deadline_time(self):
         return self.deadline_time
 
+    def get_summary(self):
+        return self.summary
 
     def get_priority(self):
         return self.priority
 
-
     def get_zone_name(self):
         return self.zone_name
 
-
     def get_work_type(self):
         return self.work_type
-
-
-
