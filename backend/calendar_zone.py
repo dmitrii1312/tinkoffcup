@@ -50,22 +50,21 @@ class CalendarZone:
             )
 
     def add_task_ex(self, type_of_work: typeOfWork):
-        self.add_task(start=type_of_work.start_time,
-                      end=type_of_work.end_time,
-                      summary=type_of_work.summary,
-                      priority=type_of_work.priority,
-                      tasktype=type_of_work.work_type,
-                      deadline=type_of_work.deadline_time)
+        cross_task = self.get_task(start=type_of_work.start_time, end=type_of_work.end_time)
 
-        cross_task = self.get_task(start=type_of_work.start_time,end=type_of_work.end_time)
-
+        if cross_task:
+            return False, type_of_work
+        else:
+            self.add_task(start=type_of_work.start_time,
+                          end=type_of_work.end_time,
+                          summary=type_of_work.summary,
+                          priority=type_of_work.priority,
+                          tasktype=type_of_work.work_type,
+                          deadline=type_of_work.deadline_time)
         return True,cross_task
 
     def get_task(self, start, end):
-        tasks = self.calendar.search(
-            start=start,
-            end=end,
-            event=True)
+        tasks = self.calendar.search(start=start, end=end,event=True)
         return tasks
 
     @staticmethod
