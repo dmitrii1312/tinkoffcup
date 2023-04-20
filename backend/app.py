@@ -50,11 +50,13 @@ for i in zones:
     calendar_zones_objs[i] = \
         CalendarZone(remote_server, username, password, zones[i])
 
+
 for i in zones.keys():
     try:
         whitelist[i]
     except KeyError:
         raise Exception("White list not for all zones")
+
 
 i = len(zones)-len(blacklist)
 if i < nFreeZones:
