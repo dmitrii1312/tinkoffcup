@@ -3,62 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scheduling events</title>
+  <title>Планировщик задач</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <script>
+    var configData = JSON.parse({{ config_app|tojson }});
+    console.log(configData);
+</script>
 </head>
 <body>
-  <header></header>
-  <div class="body">
-    <h1>Ввод данных</h1>
-    <form action="/" method="post">
-      <div class="inputs">
-        <label for="startTime">Дата и время начала работ:</label>
-          <input type="datetime-local" id="startTime" name="startTime" required>
-        <br><br>
+  <header>Планировщик задач 1.0</header>
+  <nav>
+    <ul>
+      <li><a href="#">Информация</a></li>
+      <li><a href="#">Планировщик</a></li>
+    </ul>
+    <button class="logout">Выход</button>
+  </nav>
+  <main>
+    <div class="body">
+      <form action="/" method="post">
+        <div class="inputs">
+          <label for="startTime">Дата и время начала работ:</label>
+            <input type="datetime-local" id="startTime" name="startTime" step="1" lang="ru-RU" format-value="yyyy-MM-ddTHH:mm" required>
 
-        <label for="durationTime">Длительность работ:</label>
-          <input type="durationTime" id="durationTime" name="durationTime"  required>
-        <br><br>
+          <label for="durationTime">Длительность работ:</label>
+            <input type="datetime-local" id="durationTime" name="durationTime"  required>
 
-        <label for="deadline">Дедлайн:</label>
-          <input type="date" id="deadline" name="deadline" required>
-        <br><br>
+          <label for="deadline">Дедлайн:</label>
+            <input type="datetime-local" id="deadline" name="deadline" required>
 
-        <label for="zones">Зона доступности:</label>
-          <select id="zones" name="zones">
-            {% for option in data.zones %}
-              <option value="{{ option }}">{{ option }}</option>
-            {% endfor %}
-          </select>
-        <br><br>
+          <label for="zones">Зона доступности:</label>
+            <select id="zones" name="zones">
+              {% for option in data.zones %}
+                <option value="{{ option }}">{{ option }}</option>
+              {% endfor %}
+            </select>
 
-        <label for="typeofWork">Тип работ:</label>
-          <select id="typeofWork" name="typeofWork">
-            <option value="auto">автоматические</option>
-            <option value="handmade">ручные</option>
-          </select>
-        <br><br>
+          <label for="typeofWork">Тип работ:</label>
+            <select id="typeofWork" name="typeofWork">
+              <option value="auto">автоматические</option>
+              <option value="handmade">ручные</option>
+            </select>
 
-        <label for="workPriority">Приоритет работ:</label>
-          <select id="workPriority" name="workPriority">
-            <option value="general">обычные</option>
-            <option value="critical">критические</option>
-          </select>
-        <br><br>
+          <label for="workPriority">Приоритет работ:</label>
+            <select id="workPriority" name="workPriority">
+              <option value="general">обычные</option>
+              <option value="critical">критические</option>
+            </select>
 
-        <label for="workInterval">Итервал проведения работ:</label>
-        <select id="workInterval" name="workInterval">
-            <option value="once">один раз</option>
-            <option value="daily">каждый день</option>
-            <option value="weekly">каждую неделю</option>
-            <option value="monthly">каждый месяц</option>
-        </select>
-      <br><br>
-      </div>
-      <input type="submit" value="Отправить">
-    </form>
-  </div>
-  </form>
-  <footer>
-  </footer>
+        </div>
+        <input type="submit" value="Отправить">
+      </form>
+    </div>
+  </main>
 </body>
 </html>

@@ -5,7 +5,6 @@ from datetime import datetime
 class CalendarZone:
 
     def __init__(self, url, username, password, calendar_name=None):
-
         self.url, self.username, self.password = url, username, password
         client = caldav.DAVClient(url, username=username, password=password)
         self.principal = client.principal()
