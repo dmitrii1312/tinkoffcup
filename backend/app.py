@@ -6,6 +6,7 @@ import json
 # Our api
 from calendar_zone import CalendarZone
 from parse_config import *
+from time_functions import *
 
 # Check interval imports only
 from check import checkInterval
@@ -108,16 +109,17 @@ def index():
         worktype = str(request.form['typeofWork'])
 
         """
-            Если работы автоматические, делаем проверку, что они
-            Не меньше 5 минут.
-            Иначе, если работы ручные, тогда делаем проверку, что они
-            не меньше 30 минут.
+            БЛОК ВАЛИДАЦИИ (Минимальная длительность)...
+                Если работы автоматические, делаем проверку, что они
+                Не меньше 5 минут.
+                Иначе, если работы ручные, тогда делаем проверку, что они
+                не меньше 30 минут.
         """
         if worktype == 'auto':
-            if minimal_duration < timedelta(minutes=5):
+            if minimal_duration < parse_timedelta(min_time[worktype]):
                 print("Error auto work can't be less than 5 minutes")
-        else:
-            if minimal_duration < timedelta(minutes=30):
+        elif worktype == 'manual':
+            if minimal_duration < parse_timedelta(min_time[worktype]):
                 print("Error handmade work can't be less than 30 minutes")
 
         # Если со временем всё ок, создаем объект интервала
@@ -136,22 +138,22 @@ def index():
         # Creating Object
         current_task = typeOfWork(worktype)
         res, text = current_task.set_start_time(start_dateTime)
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][priority])
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_end_time(current_task.calculate_end_time())
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_deadline(deadline)
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_priority(priority)
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_zone_name(entered_zone)
-        if ! res:
+        if not res:
             return text
         # triing to save task object
         res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
@@ -159,12 +161,10 @@ def index():
             return render_template('data_added.html', data=data)
         else:
             return "task conflict"
-
-        
     else:
-        #config_app = jsonify(json_config_data).data.decode('utf-8')
+        # config_app = jsonify(json_config_data).data.decode('utf-8')
         return render_template('index.html', data=data)
-    #return render_template('index.html', data=data)
+    # return render_template('index.html', data=data)
 
 
 if __name__ == '__main__':
