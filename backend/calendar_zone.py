@@ -50,10 +50,9 @@ class CalendarZone:
             )
 
     def add_task_ex(self, type_of_work: typeOfWork):
-        cross_task = self.get_task(start=type_of_work.start_time, end=type_of_work.end_time)
-
-        if cross_task:
-            return False, type_of_work
+        cross_event = self.get_task(start=type_of_work.start_time, end=type_of_work.end_time)
+        if cross_event:
+            return False, self.conv_task_to_work(cross_event)
         else:
             self.add_task(start=type_of_work.start_time,
                           end=type_of_work.end_time,
@@ -61,7 +60,23 @@ class CalendarZone:
                           priority=type_of_work.priority,
                           tasktype=type_of_work.work_type,
                           deadline=type_of_work.deadline_time)
-        return True,cross_task
+        return True
+
+    def conv_task_to_work(self, events: list[caldav.objects.CalendarObjectResource]):
+        list_of_work = []
+        for event in events:
+            list_of_work.append(
+                typeOfWork(
+                    start_time=event.icalendar_component["dtstart"].dt,
+                    end_time=event.icalendar_component["dtend"].dt,
+                    duration_time=-1,
+                    deadline_time=event.icalendar_component["deadline"].dt,
+                    priority=event.icalendar_component["priority"],
+                    zone_name=event.calendar.name,
+                    work_type=event.icalendar_component["tasktype"],
+                )
+            )
+        return list_of_work
 
     def get_task(self, start, end):
         tasks = self.calendar.search(start=start, end=end,event=True)
