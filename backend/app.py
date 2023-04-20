@@ -97,6 +97,7 @@ def index():
         duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
         new_dateTime = start_dateTime + duration
         worktype = str(request.form['worktype'])
+        priority = str(request.form['priority'])
         deadline = datetime.strptime(str(request.form['deadline']), "%Y-%m-%dT")      
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
@@ -111,7 +112,7 @@ def index():
         if deadline < new_dateTime:
             return "Deadline too early"
 
-        
+        # Creating Object
         current_task = typeOfWork(worktype)
         res, text = current_task.set_start_time(start_dateTime)
         if ! res:
@@ -120,18 +121,25 @@ def index():
         if ! res:
             return text
         res, text = current_task.set_end_time(current_task.calculate_end_time())
-        
-        check_data = checkInterval(calendar_zones_objs,
-                                   interval_obj,
-                                   json_config_data)
-
-        if check_data:
-            calendar_zones_objs[entered_zone].add_task(
-                interval_obj.start,
-                interval_obj.end)
+        if ! res:
+            return text
+        res, text = current_task.set_deadline(deadline)
+        if ! res:
+            return text
+        res, text = current_task.set_priority(priority)
+        if ! res:
+            return text
+        res, text = current_task.set_zone_name(entered_zone)
+        if ! res:
+            return text
+        # triing to save task object
+        res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
+        if res:
             return render_template('data_added.html', data=data)
         else:
-            return "Add data failed"
+            return "task conflict"
+
+        
     else:
         config_app = jsonify(json_config_data).data.decode('utf-8')
         return render_template('index.html',
