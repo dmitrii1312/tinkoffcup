@@ -170,11 +170,27 @@ def index():
         if res:
             return render_template('data_added.html', data=data)
         else:
+            res2, new_task = find_time_for_task(calendar_zones_objs[entered_zone],current_task)
             return "task conflict"
     else:
         # config_app = jsonify(json_config_data).data.decode('utf-8')
         return render_template('index.html', data=data)
     # return render_template('index.html', data=data)
+
+
+def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
+    newtask = task
+    tasks = calendar.get_tasks(task)
+    for itask in tasks:
+        newtask.set_start_time(itask.get_end_time())
+        newtask.set_end_time(newtask.calculate_end_time())
+        n = calendar.get_tasks(newtask)
+        if len(n) == 0:
+            if checkWhitelist(whitelist, newtask.get_start_time(), newtask.get_duration_time()):
+                return newtask
+
+
+
 
 
 if __name__ == '__main__':
