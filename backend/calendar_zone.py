@@ -4,18 +4,17 @@ from datetime import datetime
 
 class CalendarZone:
 
-    def __init__(self, sUrl, sUsername, sPassword, calendarName=None):
-
-        self.sUrl, self.sUsername, self.sPassword = sUrl, sUsername, sPassword
-        client = caldav.DAVClient(sUrl, username=sUsername, password=sPassword)
+    def __init__(self, url, username, password, calendar_name=None):
+        self.url, self.username, self.password = url, username, password
+        client = caldav.DAVClient(url, username=username, password=password)
         self.principal = client.principal()
-        self.calendar = self.principal.calendar(name=calendarName)    
+        self.calendar = self.principal.calendar(name=calendar_name)
 
-        if calendarName is not None:
+        if calendar_name is not None:
             # Check that calendar already exists
             calendars = self.principal.calendars()
-            calendarName = next((calendar for calendar in calendars if calendar.name == calendarName), None)
-            if calendarName is None:
+            calendar_name = next((calendar for calendar in calendars if calendar.name == calendar_name), None)
+            if calendar_name is None:
                 raise Exception("Calendar doesn't exists")
 
     def get_existing_cals(self):
@@ -28,37 +27,41 @@ class CalendarZone:
                 name=name
             )
 
-    def add_task(self, start=datetime, end=datetime,
-                 summary="", repeat="once", priority="2",
-                 tasttype="auto"):
-
-        event = {}
-
+    def add_task(self, start=datetime, end=datetime, summary="", repeat="once", priority="2", tasktype="auto", deadline=datetime):
         if repeat != "once":
             event = self.calendar.save_event(
                 dtstart=start,
                 dtend=end,
                 summary=summary,
-                rrule={'FREQ': repeat})
+                priority=priority,
+                tasktype=tasktype,
+                deadline=deadline,
+                rrule={'FREQ': repeat}
+            )
         else:
             event = self.calendar.save_event(
-                    dtstart=start,
-                    dtend=end,
-                    summary=summary)
+                dtstart=start,
+                dtend=end,
+                summary=summary,
+                priority=priority,
+                tasktype=tasktype,
+                deadline=deadline,
+            )
 
     def get_task(self, start, end):
         tasks = self.calendar.search(
             start=start,
             end=end,
-            event=True,
-        )
+            event=True)
         return tasks
 
-    def del_task(self, events: caldav.Event):
+    @staticmethod
+    def del_task(events: caldav.Event):
         for event in events:
             event.delete()
 
-    def modify_task(self, event, summary, start, end):
+    @staticmethod
+    def modify_task(event, summary, start, end):
         if summary:
             event.icalendar_component["summary"] = summary
         if start:
@@ -66,3 +69,16 @@ class CalendarZone:
         if end:
             event.icalendar_component["dtend"].dt = end
         event.save()
+
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "amalyshev")
+#print(obj.get_task(datetime(2023, 2, 18, 1), datetime(2023, 8, 18, 1))[0].data)
+
+obj.add_task(
+    start=datetime(2023, 4, 19, 1),
+    end=datetime(2023, 4, 19, 5),
+    summary="test",
+    priority="10",
+    tasktype="manual")
+
+print(obj.get_task(datetime(2023, 4, 19, 1), datetime(2023, 4, 20, 1))[0].data)

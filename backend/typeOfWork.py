@@ -1,15 +1,16 @@
 from dataclasses import dataclass
 from datetime import datetime
+import time
 
 
 # тайм зоны беда, сдвиг на два часа + таймзону в конфиг
 @dataclass
-class typeOfWork:
+class TypeOfWork:
     start_dateTime: datetime  # Начало работ дата + время
     end_time: datetime  # Конец работ, только время
     priority: str  # Приоритет работ critical or normal
     inWhiteList: bool  # True - попадаем в белый список
-    duration: datetime  # Продолжительность работ
+    duration: datetime.time()  # Продолжительность работ
 
 
 """
@@ -29,3 +30,12 @@ start_dateTime + end_time = delta
 + 
 вопрос: У нас  минимальное время и максимальное это константы?
 """
+
+
+    def duration_job(self, min_time=time, max_time=time):
+        if self.duration <= min_time.time():
+            return False, "Duration is not compatible with minimal time"
+        elif self.duration > max_time.time():
+            return False, "Duration is not compatible with maximum time"
+        else:
+            return True, "Duration is compatible"
