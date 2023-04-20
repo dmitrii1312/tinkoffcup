@@ -1,0 +1,118 @@
+fullnameOverride: ""
+
+image:
+  registry: registry.github.com/scheduler
+  tag: 1
+  pullPolicy: IfNotPresent
+  imagePullSecrets: []
+  port: 8080
+
+updateStrategy:
+  type: RollingUpdate
+
+podAnnotations: {}
+
+replicaCount: 1
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations: {}
+  # Cluster domain name for generating host url
+  clusterDomainName: "svc.cluster.local"
+  # Override default host name into host url
+  overrideAppName: ""
+  tls:
+    enable: false
+    secretName: ""
+
+hostAliases: []
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 6
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 6
+
+# Default env variable
+env: {}
+# Default secret variables
+secret: {}
+
+# Secret annotations to use admission webhook
+secretAnnotations: {}
+
+secretStorage:
+  # Enable sealed secret as secrets store
+  externalSecrets:
+    enabled: false
+    secretStoreName: vault-backend
+    refreshInterval: 60s
+    secretPath: ""
+  # Use existing secret
+  existingSecret: ""
+
+persistentVolume:
+  enabled: false
+  storageClass: nfs-client
+  accessMode:
+    - ReadWriteMany
+  size: 1Gi
+  randomVolumeName: false
+  mountPath: "/app/config"
+  existingClaim: ""
+
+emptyDir:
+  enabled: false
+  mountPath: "/tmp"
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+
+servicemonitor:
+  enabled: false
+  annotations: {}
+  promOperatorSelector:
+    release: prometheus
+  path: "/metrics"
+  port: "http"
+  interval: "15s"
+
+nodeSelector: {}
+
+affinity: {}
+
+tolerations: {}
+
+podSecurityContext: {}

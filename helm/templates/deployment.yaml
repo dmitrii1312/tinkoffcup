@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "scheduler.fullname" . }}
+  labels:
+    {{- include "scheduler.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "scheduler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      name: {{ include "scheduler.fullname" . }}
+      labels:
+        {{- include "scheduler.labels" . | nindent 8 }}
+      annotations:
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+            {{- if not .Values.persistentVolume.existingClaim }}
+          claimName: {{ include "scheduler.fullname" . }}
+            {{- else }}
+          claimName: {{ .Values.persistentVolume.existingClaim }}
+            {{- end }}
+        {{- if .Values.emptyDir.enabled }}
+        - name: inmemory-volume
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "scheduler.fullname" . }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "scheduler.imageName" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.image.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.persistentVolume.mountPath }}
+          {{- if .Values.emptyDir.enabled }}
+          - name: inmemory-volume
+            mountPath: {{ .Values.emptyDir.mountPath }}
+          {{- end }}
+          {{- if or .Values.env .Values.secret }}
+          envFrom:
+          {{- if .Values.env }}
+          - configMapRef:
+              name: {{ include "scheduler.fullname" . }}
+          {{- end }}
+          {{- if .Values.secret }}
+          - secretRef:
+              name: {{ include "scheduler.secretName" . }}
+          {{- end }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

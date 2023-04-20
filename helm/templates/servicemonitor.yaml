@@ -1,0 +1,29 @@
+{{- if .Values.servicemonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "scheduler.fullname" . }}
+  labels:
+  {{- include "scheduler.labels" . | nindent 4 }}
+  {{- toYaml .Values.servicemonitor.promOperatorSelector | nindent 4 }}
+  {{- with .Values.servicemonitor.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+    - path: {{ .Values.servicemonitor.path }}
+      port: {{ .Values.servicemonitor.port }}
+      {{- if .Values.servicemonitor.interval }}
+      interval: {{ .Values.servicemonitor.interval }}
+      {{- end }}
+      {{- if .Values.servicemonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.servicemonitor.scrapeTimeout }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+  {{- include "scheduler.selectorLabels" . | nindent 6 }}
+  {{- end }}
