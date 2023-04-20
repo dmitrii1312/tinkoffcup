@@ -24,8 +24,8 @@
 	"Sochi": "10m"
     },
     "min_long": {
-	"auto": "1m",
-	"manual": "5m"
+	"auto": "5m",
+	"manual": "30m"
     },
     "work_step": {
 	"auto": "1m",

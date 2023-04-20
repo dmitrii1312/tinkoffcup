@@ -1,11 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime
-import time
-import TypeOfWork
+from typeOfWork import typeOfWork
+
 
 @dataclass
-class manualWork(TypeOfWork):
-    compress: int # cтепень сжатия работ
+class manualWork(typeOfWork):
+    compress: int  # cтепень сжатия работ
 
     def set_priority(self, priority):
         super().set_priority(priority)
@@ -13,4 +12,3 @@ class manualWork(TypeOfWork):
 
     def get_priority(self):
         return super().get_priority()
-

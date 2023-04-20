@@ -6,6 +6,7 @@ import json
 # Our api
 from calendar_zone import CalendarZone
 from parse_config import *
+from time_functions import *
 
 # Check interval imports only
 from check import checkInterval
@@ -71,33 +72,56 @@ if i < nFreeZones:
 #     except KeyError:
 #         raise Exception("Pause time set not for all zones")
 
+data = {
+    'zones': list(calendar_zones_objs.keys()),
+    'calLink': json_config_data['webcal_server']
+}
+
 
 # READ CONFIG JSON
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
-    data = {
-        'zones': list(calendar_zones_objs.keys()),
-        'calLink': json_config_data['webcal_server']
-    }
-
     if request.method == 'POST':
-        # Получаем дату старта и время
-        start_dateTime = datetime.strptime(
-            str(request.form['startTime']),
-            "%Y-%m-%dT%H:%M"
-        )
 
-        # Получаем длительность работ
-        end_time = datetime.strptime(
-            str(request.form['durationTime']),
-            "%H:%M"
-        )
+        # Дата и время начала работ
+        start_dateTime = datetime.strptime(str(request.form['startTime']),
+                                           "%Y-%m-%dT%H:%M")
+
+        # Длительность работ
+        end_time = datetime.strptime(str(request.form['durationTime']),
+                                     "%Y-%m-%dT%H:%M")
+
+        # Дедлайн
+        deadline = datetime.strptime(str(request.form['deadline']),
+                                     "%Y-%m-%dT%H:%M")
 
         duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
+
+        # Минимальная длительность работ
+        # 09:00 + 10:00 = 1ч
+        minimal_duration = end_time - start_dateTime
+
         new_dateTime = start_dateTime + duration
-        worktype = str(request.form['worktype'])
-        deadline = datetime.strptime(str(request.form['deadline']), "%Y-%m-%dT")      
+        print(minimal_duration)
+
+        # Получаем тип работ (ручные, автоматические)
+        worktype = str(request.form['typeofWork'])
+
+        """
+            БЛОК ВАЛИДАЦИИ (Минимальная длительность)...
+                Если работы автоматические, делаем проверку, что они
+                Не меньше 5 минут.
+                Иначе, если работы ручные, тогда делаем проверку, что они
+                не меньше 30 минут.
+        """
+        if worktype == 'auto':
+            if minimal_duration < parse_timedelta(min_time[worktype]):
+                print("Error auto work can't be less than 5 minutes")
+        elif worktype == 'manual':
+            if minimal_duration < parse_timedelta(min_time[worktype]):
+                print("Error handmade work can't be less than 30 minutes")
+
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
         interval_obj = interval(
@@ -106,37 +130,41 @@ def index():
             entered_zone)
 
         # И делаем чек для этого интервала
-        if checkBlacklist(entered_zone, blacklist):
-            return "Zone in blacklist"
-        if deadline < new_dateTime:
-            return "Deadline too early"
+        # if checkBlacklist(entered_zone, blacklist):
+        #     return "Zone in blacklist"
+        # if deadline<new_dateTime:
+        #     return "Deadline too early"
 
-        
+        # Creating Object
         current_task = typeOfWork(worktype)
         res, text = current_task.set_start_time(start_dateTime)
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][priority])
-        if ! res:
+        if not res:
             return text
         res, text = current_task.set_end_time(current_task.calculate_end_time())
-        
-        check_data = checkInterval(calendar_zones_objs,
-                                   interval_obj,
-                                   json_config_data)
-
-        if check_data:
-            calendar_zones_objs[entered_zone].add_task(
-                interval_obj.start,
-                interval_obj.end)
+        if not res:
+            return text
+        res, text = current_task.set_deadline(deadline)
+        if not res:
+            return text
+        res, text = current_task.set_priority(priority)
+        if not res:
+            return text
+        res, text = current_task.set_zone_name(entered_zone)
+        if not res:
+            return text
+        # triing to save task object
+        res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
+        if res:
             return render_template('data_added.html', data=data)
         else:
-            return "Add data failed"
+            return "task conflict"
     else:
-        config_app = jsonify(json_config_data).data.decode('utf-8')
-        return render_template('index.html',
-                               data=data,
-                               config_app=config_app)
+        # config_app = jsonify(json_config_data).data.decode('utf-8')
+        return render_template('index.html', data=data)
+    # return render_template('index.html', data=data)
 
 
 if __name__ == '__main__':
