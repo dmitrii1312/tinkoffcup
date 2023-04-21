@@ -59,7 +59,7 @@ class typeOfWork:
 # TODO: Нужно проверить, что максимальное время не равно 0, так же нужно придумать значение, которое будет считаться некорректным(устанавливаться в случае некорректного значения длительности)
     def set_duration(self, duration: timedelta, min_time: timedelta, max_time: timedelta):
         self.duration_time = duration
-        res, text = self.check_duration_job(self, min_time, max_time)
+        res, text = self.check_duration_job(min_time, max_time)
         if res:
             return True, text
         else:
