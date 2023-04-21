@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import os.path as path
 import json
 import time
+from typing import *
 
 import requests
 
