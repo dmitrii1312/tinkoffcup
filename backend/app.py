@@ -6,8 +6,8 @@ import time
 
 # Our api
 from calendar_zone import CalendarZone
-from parse_config import *
-from time_functions import parse_timedelta
+# Our utils
+from utils import load_config, parse_timedelta
 
 # Check interval imports only
 from check import checkInterval
@@ -26,13 +26,10 @@ app = Flask(__name__,
 # Ищем и проверяем существование конфига в корне проекта
 config_path = path.abspath(path.join(__file__, "../../config.json"))
 if not path.exists(config_path):
-    print("Config file doesn't exists")
-# Получаем весь конфиг
-try:
-    with open(config_path, 'r') as json_config:
-        json_config_data = json.load(json_config)
-except ValueError:
-    raise Exception("Errors in config file") from None
+    Exception(f"Config {config_path} doesn't exists")
+# Load configuration file for application
+json_config_data = load_config(config_path)
+
 
 remote_server = json_config_data['caldav_server']
 username = json_config_data['username']
@@ -75,6 +72,7 @@ data = {
 
 
 # READ CONFIG JSON
+@app.route('/planner', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def index():
 

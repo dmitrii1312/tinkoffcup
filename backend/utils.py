@@ -1,5 +1,20 @@
+import json
 import re
 from datetime import timedelta
+from types import SimpleNamespace
+
+
+def load_config_to_namespace(config_path):
+    with open(config_path) as json_file:
+        ns = json.load(json_file,
+                       object_hook=lambda x: SimpleNamespace(**x))
+    return ns
+
+
+def load_config(config_path):
+    with open(config_path) as json_file:
+        data = json.load(json_file)
+    return data
 
 
 def parse_timedelta(s):
