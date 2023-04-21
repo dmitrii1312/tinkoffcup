@@ -367,7 +367,7 @@ def request_to_task(request, work_id: str, zone):
     res, text = current_task.set_start_time(start_dateTime)
     if not res:
         return res, text, None
-    res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][workPriority])
+    res, text = current_task.set_duration(duration, parse_timedelta(min_time[worktype]), parse_timedelta(max_time[worktype][workPriority]))
     if not res:
         return res, text, None
     res, text = current_task.set_end_time(current_task.calculate_end_time())
