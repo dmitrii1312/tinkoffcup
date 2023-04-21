@@ -51,7 +51,7 @@ max_deadline = json_config_data['max_deadline']
 # Кратность dict
 multiplicity = json_config_data['multiplicity']
 
-calendar_zones_objs = []
+calendar_zones_objs = {}
 for i in zones:
     calendar_zones_objs[i] = \
         CalendarZone(remote_server, username, password, zones[i])
