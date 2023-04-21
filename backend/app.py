@@ -253,7 +253,7 @@ def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
                 if len(freeintervals) == 0:
                     return None
                 else:
-                    newtask.set_start_time(freeintervals[0].start_time)
+                    newtask.set_start_time(freeintervals[0].start)
                     newtask.set_end_time(newtask.calculate_end_time())
                     return newtask
 
@@ -295,6 +295,9 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             busy_end = (i.get_end_time()-task.get_start_time())//60
         freebusy= fillarray(freebusy,busy_start, busy_end, 1)
     start_index=find_free_space_index(freebusy,int(task.get_duration_time()//60))
+    if start_index != -1:
+        starttime_delta=timedelta(minutes=start_index)
+        retval = interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.duration)
     return None
 
 
@@ -310,7 +313,16 @@ def validate_request(request):
     return True
 
 def find_free_space_index(arr: list[int], duration: int, good_value: int):
-    return 0
+    k=0
+    start=0
+    for i in range(0,len(arr)):
+        if arr[i] == good_value:
+            k=k+1
+            if k== duration:
+                return i
+        else:
+            k=0
+    return -1
 
 def request_to_task(request, work_id: str, zone):
     start_dateTime = datetime.strptime(str(request.form['startTime']),
