@@ -262,8 +262,28 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
     duration= task.get_deadline_time()-task.get_start_time()
     duration_minutes = duration.seconds//60
     freebusy = []
+    whitelist_dt=[]
+    oneday=timedelta(days=1)
+    k=0
     for i in range(0,duration_minutes):
-        freebusy[i]=0
+        freebusy[i]=1
+
+    for i in whitelist:
+        while k*oneday<(duration+oneday) :
+            whitelist_dt.append(conv_whitelist_to_interval(task.get_start_time()+k*oneday,i))
+            k=k+1
+
+    for i in whitelist_dt:
+        if i.start < task.get_start_time():
+            free_start=0
+        else:
+            free_start = int((i.start-task.get_start_time())//60)
+        if i.end > task.get_deadline_time():
+            free_end = duration_minutes
+        else:
+            free_end = i.end - task.get_start_time()
+        freebusy= fillarray(freebusy, free_start, free_end, 0)
+
     for i in planned_tasks:
         if i.get_start_time()<task.get_start_time():
             busy_start=0
@@ -273,8 +293,8 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             busy_end = duration_minutes
         else:
             busy_end = (i.get_end_time()-task.get_start_time())//60
-        freebusy= fillbusy(freebusy,busy_start, busy_end, 1)
-
+        freebusy= fillarray(freebusy,busy_start, busy_end, 1)
+    start_index=find_free_space_index(freebusy,int(task.get_duration_time()//60))
     return None
 
 
@@ -283,8 +303,14 @@ def fillarray(arr:list[int], start, end, num):
         arr[i]=num
     return arr
 
+def conv_whitelist_to_interval(date: datetime, whitelist: str):
+    return None
+
 def validate_request(request):
     return True
+
+def find_free_space_index(arr: list[int], duration: int, good_value: int):
+    return 0
 
 def request_to_task(request, work_id: str, zone):
     start_dateTime = datetime.strptime(str(request.form['startTime']),
