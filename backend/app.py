@@ -118,7 +118,7 @@ def agentdav_proxy():
     return response.content, response.status_code, response.headers.items()
 
 def add_work(request):
-    
+    current_tasks= {}
     # Дата и время начала работ
     start_dateTime = datetime.strptime(str(request.form['startTime']),
                                        "%Y-%m-%dT%H:%M")
@@ -203,27 +203,12 @@ def add_work(request):
     # Creating Object
     work_id = uuid.uuid4()
     for i in request.form['zones']:
-        res, current_task= request_to_task(request, work_id, i)
+        res, text, current_task= request_to_task(request, work_id, i)
+        if res:
+            current_tasks.append(current_task)
+        else:
+            return res, text
 
-    current_task = typeOfWork(worktype, work_id)
-    res, text = current_task.set_start_time(start_dateTime)
-    if not res:
-        return res, text
-    res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][workPriority])
-    if not res:
-        return res, text
-    res, text = current_task.set_end_time(current_task.calculate_end_time())
-    if not res:
-        return res, text
-    res, text = current_task.set_deadline(deadline)
-    if not res:
-        return res, text
-    res, text = current_task.set_priority(workPriority)
-    if not res:
-        return res, text
-    res, text = current_task.set_zone_name(entered_zone)
-    if not res:
-        return res, text
     # triing to save task object
     res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
     if res:
@@ -243,10 +228,12 @@ def cancel_task(request):
 def reschedule_work(request):
     work_id = request.form['work_id']
     if validate_request(request):
+
         for i in request.form['zones']:
-            res, event = calendar_zones_objs[i].find_by_workid(work_id)
+            res, task = calendar_zones_objs[i].get_task_by_work_id(work_id)
             if res:
-                event.set_start_time(request.form[''])
+                task = request_to_task(request, work_id, i)
+                calendar_zones_objs[i].modify_task(task)
 
 
 def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
@@ -277,8 +264,54 @@ def validate_request(request):
     return True
 
 def request_to_task(request, work_id: str, zone):
+    start_dateTime = datetime.strptime(str(request.form['startTime']),
+                                       "%Y-%m-%dT%H:%M")
 
-    return False, None
+    # Для проверки начала работ на кратность
+    start_time_only = start_dateTime.hour * 60 + start_dateTime.minute
+
+    # Длительность работ
+    end_time = datetime.strptime(str(request.form['durationTime']),
+                                 "%Y-%m-%dT%H:%M")
+
+    # Дедлайн
+    deadline = datetime.strptime(str(request.form['deadline']),
+                                 "%Y-%m-%dT%H:%M")
+
+    deadline_duration = deadline - start_dateTime
+
+    duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
+    new_dateTime = start_dateTime + duration
+
+    # Минимальная длительность работ
+    # 10:00 - 09:00 = 1ч
+    minMax_duration = end_time - start_dateTime
+    # Максимальная длительность работ
+    #
+    # Получаем тип работ (ручные, автоматические)
+    worktype = str(request.form['typeofWork'])
+    workPriority = str(request.form['workPriority'])
+    current_task = typeOfWork(worktype,work_id)
+    res, text = current_task.set_start_time(start_dateTime)
+    if not res:
+        return res, text, None
+    res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][workPriority])
+    if not res:
+        return res, text, None
+    res, text = current_task.set_end_time(current_task.calculate_end_time())
+    if not res:
+        return res, text, None
+    res, text = current_task.set_deadline(deadline)
+    if not res:
+        return res, text, None
+    res, text = current_task.set_priority(workPriority)
+    if not res:
+        return res, text, None
+    res, text = current_task.set_zone_name(entered_zone)
+    if not res:
+        return res, text, None
+
+    return True, "OK", current_task
 
 if __name__ == '__main__':
     app.run(debug=True)
