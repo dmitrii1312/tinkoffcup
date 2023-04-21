@@ -121,3 +121,6 @@ class typeOfWork:
 
     def get_work_type(self):
         return self.work_type
+
+    def get_work_id(self):
+        return self.work_id
