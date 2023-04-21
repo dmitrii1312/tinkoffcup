@@ -66,28 +66,27 @@ class CalendarZone:
         return True
 
     def conv_task_to_work(self, event: caldav.objects.CalendarObjectResource):
-        res = typeOfWork(work_type = event.icalendar_component["tasktype"], work_id = event.icalendar_component["workid"])
-        res.start_time=event.icalendar_component["dtstart"].dt,
-        res.end_time=event.icalendar_component["dtend"].dt,
-        res.duration_time=typeOfWork.set_duration(typeOfWork.calculate_duration()),
-        res.deadline_time=event.icalendar_component["deadline"].dt,
-        res.priority=event.icalendar_component["priority"],
-        res.zone_name=event.calendar.name,
+        res = typeOfWork(work_type=event.icalendar_component["tasktype"], work_id=event.icalendar_component["workid"])
+        res.start_time = event.icalendar_component["dtstart"].dt
+        res.end_time = event.icalendar_component["dtend"].dt
+        res.duration_time = typeOfWork.set_duration(typeOfWork.calculate_duration())
+        res.deadline_time = event.icalendar_component["deadline"].dt
+        res.priority = event.icalendar_component["priority"]
+        res.zone_name = event.calendar.name
         return res
 
     def get_task(self, start, end):
         return self.calendar.search(start=start, end=end, event=True)
 
     def get_task_ex(self, start, end):
-        result=[]
-        tasks= self.calendar.search(start=start, end=end, event=True)
+        result = []
+        tasks = self.calendar.search(start=start, end=end, event=True)
         if len(tasks) == 0:
             return None
         else:
             for i in tasks:
                 result.append(self.conv_task_to_work(i))
         return result
-
 
     def get_work_id(self, event: caldav.Event):
         cal = Calendar.from_ical(event.data)
@@ -110,12 +109,12 @@ class CalendarZone:
         for event in events:
             event.delete()
 
-    @staticmethod
-    def modify_task(event, summary, start, end):
-        if summary:
-            event.icalendar_component["summary"] = summary
-        if start:
-            event.icalendar_component["dtstart"].dt = start
-        if end:
-            event.icalendar_component["dtend"].dt = end
+    def modify_task(self, type_of_work: typeOfWork):
+        event = self.get_task_by_work_id(type_of_work.work_id)[0]
+        event.icalendar_component["summary"] = type_of_work.summary
+        event.icalendar_component["dtstart"].dt = type_of_work.start_time
+        event.icalendar_component["dtend"].dt = type_of_work.end_time
+        event.icalendar_component["priority"] = type_of_work.priority
+        event.icalendar_component["deadline"].dt = type_of_work.deadline_time
+        event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
