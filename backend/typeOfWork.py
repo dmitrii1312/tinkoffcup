@@ -31,9 +31,9 @@ class typeOfWork:
     priority: str  # Приоритет работ critical or normal
     zone_name: str  # название зоны
     work_type: str  # тип работ
-    work_id: int # id работ
+    work_id: str # id работ
 
-    def __init__(self, work_type: str, work_id: int):
+    def __init__(self, work_type: str, work_id: str):
         self.work_type = work_type
         self.work_id = work_id
         self.duration = -1
