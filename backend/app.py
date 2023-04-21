@@ -9,7 +9,7 @@ from parse_config import *
 from time_functions import parse_timedelta
 
 # Check interval imports only
-from check import checkInterval
+from check import *
 from interval import interval
 
 from autoWork import autoWork
@@ -161,11 +161,14 @@ def add_work(request):
 
     # Creating Object
     work_id = uuid.uuid4()
+    for i in request.form['zones']:
+        res, current_task= request_to_task(request, work_id, i)
+
     current_task = typeOfWork(worktype, work_id)
     res, text = current_task.set_start_time(start_dateTime)
     if not res:
         return res, text
-    res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][priority])
+    res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][workPriority])
     if not res:
         return res, text
     res, text = current_task.set_end_time(current_task.calculate_end_time())
@@ -174,7 +177,7 @@ def add_work(request):
     res, text = current_task.set_deadline(deadline)
     if not res:
         return res, text
-    res, text = current_task.set_priority(priority)
+    res, text = current_task.set_priority(workPriority)
     if not res:
         return res, text
     res, text = current_task.set_zone_name(entered_zone)
@@ -199,10 +202,10 @@ def cancel_task(request):
 def reschedule_work(request):
     work_id = request.form['work_id']
     if validate_request(request):
-        for i in tasks:
-            res, event = calendar.find_by_workid(work_id)
+        for i in request.form['zones']:
+            res, event = calendar_zones_objs[i].find_by_workid(work_id)
             if res:
-                event.set_start_time(
+                event.set_start_time(request.form[''])
 
 
 def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
@@ -211,11 +214,30 @@ def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
     for itask in tasks:
         newtask.set_start_time(itask.get_end_time())
         newtask.set_end_time(newtask.calculate_end_time())
+        if newtask.get_deadline_time()<newtask.get_end_time():
+            return None
         n = calendar.get_tasks(newtask)
         if len(n) == 0:
             if checkWhitelist(whitelist, newtask.get_start_time(), newtask.get_duration_time()):
                 return newtask
+            else:
+                freeintervals = find_intervals_by_duration (calendar, whitelist, newtask)
+                if len(freeintervals) == 0:
+                    return None
+                else:
+                    newtask.set_start_time(freeintervals[0].start_time)
+                    newtask.set_end_time(newtask.calculate_end_time())
+                    return newtask
 
+def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWork ):
+    return None
+
+def validate_request(request):
+    return True
+
+def request_to_task(request, work_id: str, zone):
+
+    return False, None
 
 if __name__ == '__main__':
     app.run(debug=True)
