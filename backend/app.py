@@ -201,19 +201,25 @@ def index():
                            error_message=error_message)
 
 
-@app.route('/proxy_caldav/<path:path>',
-           methods=['GET', 'POST', 'PUT', 'DELETE'])
-def proxy_caldav(path):
-    url = remote_server + path
+@app.route('/agentdav/',
+           methods=['GET', 'POST', 'PUT', 'DELETE', 'PROPFIND', 'MKCALENDAR'])
+def agentdav_proxy():
+    url = remote_server + request.full_path.replace('/agentdav', '')
+    print(url)
+    headers = {key: value for (key, value) in request.headers if key != 'Host'}
+    headers['Content-Type'] = request.content_type or 'text/plain'
+
     response = requests.request(
         method=request.method,
         url=url,
-        headers=request.headers,
-        data=request.data,
-        cookies=request.cookies,
+        headers=headers,
+        data=request.get_data(),
+        auth=('admin', 'admin'),
+        verify=False,
     )
-
-    print("RESP:", response)
+    
+    print(response.content, response.status_code, response.headers.items())
+    return response.content, response.status_code, response.headers.items()
 
 
 if __name__ == '__main__':
