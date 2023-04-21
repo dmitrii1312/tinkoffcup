@@ -1,6 +1,7 @@
 import caldav
 from datetime import datetime
 from typeOfWork import typeOfWork
+from icalendar import Calendar
 
 
 class CalendarZone:
@@ -17,9 +18,6 @@ class CalendarZone:
             calendar_name = next((calendar for calendar in calendars if calendar.name == calendar_name), None)
             if calendar_name is None:
                 raise Exception("Calendar doesn't exists")
-
-    def get_existing_cals(self):
-        return self.principal.calendars()
 
     def add_calendar(self, name):
         calendars = self.get_existing_cals()
@@ -79,13 +77,24 @@ class CalendarZone:
             work_id=event.icalendar_component["workid"]
         )
 
-
     def get_task(self, start, end):
-        return self.calendar.search(start=start, end=end,event=True)
-
+        return self.calendar.search(start=start, end=end, event=True)
 
     def get_work_id(self, event: caldav.objects.CalendarObjectResource):
         return event.icalendar_component["workid"]
+
+    def get_existing_cals(self):
+        return self.principal.calendars()
+
+    def get_task_by_work_id(self, work_id: int):
+        events = self.calendar.events()
+        list_of_event = []
+        for event in events:
+            cal = Calendar.from_ical(event.data)
+            event_component = cal.walk('VEVENT')[0]
+            if event_component.get('WORKID') == str(work_id):
+                list_of_event.append(event)
+        return list_of_event
 
     @staticmethod
     def del_task(events: caldav.Event):
