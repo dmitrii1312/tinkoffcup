@@ -18,6 +18,14 @@ import os.path as path
 #    return data['black']
 
 # возвращаем свободно ли в требуемой зоне и в скольки зонах есть места
+def conv_whitelist_to_interval(date: datetime, whitelist: str):
+    startdate= datetime(year=date.year, month=date.month, day=date.day, hour=0, minute=0)
+    sParts = whitelist.partition("-")
+    nIntStart = startdate + timedelta(hours=(int(sParts[0])-1))
+    nIntEnd = startdate + timedelta(hours=int(sParts[2]))
+    result=interval(start=nIntStart, end=nIntEnd)
+    return result
+
 def checkBlacklist(zonename, blackzonelist):
     for i in blackzonelist:
         if zonename==i:

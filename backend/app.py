@@ -263,6 +263,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
     duration_minutes = duration.seconds//60
     freebusy = []
     whitelist_dt=[]
+    retval=[]
     oneday=timedelta(days=1)
     k=0
     for i in range(0,duration_minutes):
@@ -306,7 +307,8 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
     start_index=find_free_space_index(freebusy,int(task.get_duration_time()//60))
     if start_index != -1:
         starttime_delta=timedelta(minutes=start_index)
-        retval = interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.duration)
+        retval.append(interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.duration))
+        return retval
     return None
 
 
@@ -314,14 +316,6 @@ def fillarray(arr:list[int], start, end, num):
     for i in range(start,end):
         arr[i]=num
     return arr
-
-def conv_whitelist_to_interval(date: datetime, whitelist: str):
-    startdate= datetime(year=date.year, month=date.month, day=date.day, hour=0, minute=0)
-    sParts = whitelist.partition("-")
-    nIntStart = startdate + timedelta(hours=(int(sParts[0])-1))
-    nIntEnd = startdate + timedelta(hours=int(sParts[2]))
-    result=interval(start=nIntStart, end=nIntEnd)
-    return result
 
 def validate_request(request):
     return True
