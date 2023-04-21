@@ -32,14 +32,18 @@
 	"manual": "5m"
     },
     "max_long": {
-	"auto": {
-	    "normal": "6h",
-	    "critical": "0"
-	},
-	"manual": {
-	    "normal": "6h",
-	    "critical": "0"
-	}
+        "auto": {
+            "normal": "6h",
+            "critical": "0"
+        },
+        "manual": {
+            "normal": "6h",
+            "critical": "0"
+        }
     },
-    "max_deadline": "4w"
+    "max_deadline": "4w",
+    "multiplicity": {
+        "manual": "5m",
+        "auto": "1m"
+    }
 }

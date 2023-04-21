@@ -18,7 +18,7 @@ def load_config(config_path):
 
 
 def parse_timedelta(s):
-    match = re.match(r'(\d+)([msh])', s)
+    match = re.match(r'(\d+)([mshw])', s)
     if not match:
         raise ValueError(f'Invalid timedelta string: {s}')
     num, unit = match.groups()
@@ -29,3 +29,5 @@ def parse_timedelta(s):
         return timedelta(minutes=num)
     elif unit == 'h':
         return timedelta(hours=num)
+    elif unit == 'w':
+        return timedelta(weeks=num)

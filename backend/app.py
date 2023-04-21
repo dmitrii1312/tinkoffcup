@@ -4,6 +4,8 @@ import os.path as path
 import json
 import time
 
+import requests
+
 # Our api
 from calendar_zone import CalendarZone
 # Our utils
@@ -41,6 +43,9 @@ blacklist = json_config_data['black']
 pause = json_config_data['pause']
 min_time = json_config_data['min_long']
 max_time = json_config_data['max_long']
+max_deadline = json_config_data['max_deadline']
+# Кратность dict
+multiplicity = json_config_data['multiplicity']
 
 calendar_zones_objs = {}
 for i in zones:
@@ -85,6 +90,9 @@ def index():
         start_dateTime = datetime.strptime(str(request.form['startTime']),
                                            "%Y-%m-%dT%H:%M")
 
+        # Для проверки начала работ на кратность
+        start_time_only = start_dateTime.hour * 60 + start_dateTime.minute
+
         # Длительность работ
         end_time = datetime.strptime(str(request.form['durationTime']),
                                      "%Y-%m-%dT%H:%M")
@@ -92,6 +100,9 @@ def index():
         # Дедлайн
         deadline = datetime.strptime(str(request.form['deadline']),
                                      "%Y-%m-%dT%H:%M")
+
+        deadline_duration = deadline - start_dateTime
+        print(deadline_duration)
 
         duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
         new_dateTime = start_dateTime + duration
@@ -121,6 +132,14 @@ def index():
             if minMax_duration < parse_timedelta(min_time[worktype]):
                 error_message = (f"Ошибка, ручные работы не могут быть "
                                  f"меньше {min_time[worktype]}")
+            # Проверка на кратность
+            multiplicity_minutes = int(parse_timedelta(
+                multiplicity[worktype]).total_seconds()/60)
+            print("AAA", multiplicity_minutes)
+            print("BBB: ", start_time_only)
+            if start_time_only % multiplicity_minutes > 0:
+                error_message = (f"Ошибка, ручные работы должны быть "
+                                 f"кратны {multiplicity[worktype]}")
 
         # Провека для ОБЫЧНЫХ максимальных работ
         if workPriority == 'normal':
@@ -128,6 +147,12 @@ def index():
                parse_timedelta(max_time[worktype][workPriority])):
                 error_message = (f"Ошибка, максимальное время не может быть "
                                  f"больше {max_time[worktype][workPriority]}")
+
+        if deadline_duration > parse_timedelta(max_deadline):
+            error_message = (f"Ошибка, дедлайн не может превышать "
+                             f"{max_deadline}")
+            
+        
 
         # Если со временем всё ок, создаем объект интервала
         entered_zone = str(request.form['zones'])
@@ -174,6 +199,21 @@ def index():
     return render_template('index.html',
                            data=data,
                            error_message=error_message)
+
+
+@app.route('/proxy_caldav/<path:path>',
+           methods=['GET', 'POST', 'PUT', 'DELETE'])
+def proxy_caldav(path):
+    url = remote_server + path
+    response = requests.request(
+        method=request.method,
+        url=url,
+        headers=request.headers,
+        data=request.data,
+        cookies=request.cookies,
+    )
+
+    print("RESP:", response)
 
 
 if __name__ == '__main__':
