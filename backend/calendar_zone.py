@@ -78,6 +78,17 @@ class CalendarZone:
     def get_task(self, start, end):
         return self.calendar.search(start=start, end=end, event=True)
 
+    def get_task_ex(self, start, end):
+        result={}
+        tasks= self.calendar.search(start=start, end=end, event=True)
+        if len(tasks) == 0:
+            return None
+        else:
+            for i in tasks:
+                result.append(self.conv_task_to_work(i))
+        return result
+
+
     def get_work_id(self, event: caldav.Event):
         cal = Calendar.from_ical(event.data)
         event_component = cal.walk('VEVENT')[0]
