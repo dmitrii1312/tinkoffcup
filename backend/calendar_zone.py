@@ -24,7 +24,7 @@ class CalendarZone:
         if name not in calendars:
             caldav.CalendarSet.make_calendar(name=name)
 
-    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: int, summary="", repeat="once",
+    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, summary="", repeat="once",
                  priority="2", tasktype="auto"):
         if repeat != "once":
             event = self.calendar.save_event(
@@ -80,19 +80,19 @@ class CalendarZone:
     def get_task(self, start, end):
         return self.calendar.search(start=start, end=end, event=True)
 
-    def get_work_id(self, event: caldav.objects.CalendarObjectResource):
-        return event.icalendar_component["workid"]
+    def get_work_id(self, event: caldav.Event):
+        cal = Calendar.from_ical(event.data)
+        event_component = cal.walk('VEVENT')[0]
+        return event_component.get('WORKID')
 
     def get_existing_cals(self):
         return self.principal.calendars()
 
-    def get_task_by_work_id(self, work_id: int):
+    def get_task_by_work_id(self, work_id: str):
         events = self.calendar.events()
         list_of_event = []
         for event in events:
-            cal = Calendar.from_ical(event.data)
-            event_component = cal.walk('VEVENT')[0]
-            if event_component.get('WORKID') == str(work_id):
+            if self.get_work_id(event) == work_id:
                 list_of_event.append(event)
         return list_of_event
 
