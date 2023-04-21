@@ -24,11 +24,10 @@ class CalendarZone:
     def add_calendar(self, name):
         calendars = self.get_existing_cals()
         if name not in calendars:
-            caldav.CalendarSet.make_calendar(
-                name=name
-            )
+            caldav.CalendarSet.make_calendar(name=name)
 
-    def add_task(self, start: datetime, end: datetime, summary="", repeat="once", priority="2", tasktype="auto", deadline: datetime):
+    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: int, summary="", repeat="once",
+                 priority="2", tasktype="auto"):
         if repeat != "once":
             event = self.calendar.save_event(
                 dtstart=start,
@@ -37,6 +36,7 @@ class CalendarZone:
                 priority=priority,
                 tasktype=tasktype,
                 deadline=deadline,
+                workid=work_id,
                 rrule={'FREQ': repeat}
             )
         else:
@@ -47,6 +47,7 @@ class CalendarZone:
                 priority=priority,
                 tasktype=tasktype,
                 deadline=deadline,
+                workid=work_id,
             )
 
     def add_task_ex(self, type_of_work: typeOfWork):
@@ -62,7 +63,8 @@ class CalendarZone:
                           summary=type_of_work.summary,
                           priority=type_of_work.priority,
                           tasktype=type_of_work.work_type,
-                          deadline=type_of_work.deadline_time)
+                          deadline=type_of_work.deadline_time,
+                          work_id=type_of_work.work_id)
         return True
 
     def conv_task_to_work(self, event: caldav.objects.CalendarObjectResource):
@@ -74,12 +76,16 @@ class CalendarZone:
             priority=event.icalendar_component["priority"],
             zone_name=event.calendar.name,
             work_type=event.icalendar_component["tasktype"],
+            work_id=event.icalendar_component["workid"]
         )
 
 
     def get_task(self, start, end):
-        tasks = self.calendar.search(start=start, end=end,event=True)
-        return tasks
+        return self.calendar.search(start=start, end=end,event=True)
+
+
+    def get_work_id(self, event: caldav.objects.CalendarObjectResource):
+        return event.icalendar_component["workid"]
 
     @staticmethod
     def del_task(events: caldav.Event):
