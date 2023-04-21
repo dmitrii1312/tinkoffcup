@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from datetime import timedelta
 import time
 
 """
@@ -26,7 +27,7 @@ import time
 class typeOfWork:
     start_time: datetime  # Начало работ дата + время
     end_time: datetime  # Конец работ, только время
-    duration_time: datetime  # Продолжительность работ
+    duration_time: timedelta  # Продолжительность работ
     deadline_time: datetime  # крайний срок для работ
     priority: str  # Приоритет работ critical or normal
     zone_name: str  # название зоны
