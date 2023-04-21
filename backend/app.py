@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import os.path as path
 import json
 import time
+from typing import *
 
 import requests
 
@@ -276,7 +277,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             k=k+1
 
     for i in whitelist_dt:
-        if i.start > task.deadline_time():
+        if i.start > task.get_deadline_time():
             continue
         if i.start < task.get_start_time():
             free_start=0
@@ -366,7 +367,7 @@ def request_to_task(request, work_id: str, zone):
     res, text = current_task.set_start_time(start_dateTime)
     if not res:
         return res, text, None
-    res, text = current_task.set_duration(duration, min_time[worktype], max_time[worktype][workPriority])
+    res, text = current_task.set_duration(duration, parse_timedelta(min_time[worktype]), parse_timedelta(max_time[worktype][workPriority]))
     if not res:
         return res, text, None
     res, text = current_task.set_end_time(current_task.calculate_end_time())

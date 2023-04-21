@@ -40,10 +40,10 @@ class typeOfWork:
         self.duration = -1
 
 # set methods
-    def check_duration_job(self, min_time=time, max_time=time):
-        if self.duration <= min_time.time():
+    def check_duration_job(self, min_time: timedelta, max_time: timedelta):
+        if self.duration_time <= min_time:
             return False, "Duration is not compatible with minimal time"
-        elif self.duration > max_time.time() and max_time.time() != 0:
+        elif self.duration_time > max_time and max_time != 0:
             return False, "Duration is not compatible with maximum time"
         else:
             return True, "Duration is compatible"
@@ -57,9 +57,9 @@ class typeOfWork:
         return True, "OK"
 
 # TODO: Нужно проверить, что максимальное время не равно 0, так же нужно придумать значение, которое будет считаться некорректным(устанавливаться в случае некорректного значения длительности)
-    def set_duration(self, duration: datetime, min_time: time, max_time: time):
+    def set_duration(self, duration: timedelta, min_time: timedelta, max_time: timedelta):
         self.duration_time = duration
-        res, text = self.check_duration_job(self, min_time, max_time)
+        res, text = self.check_duration_job(min_time, max_time)
         if res:
             return True, text
         else:
