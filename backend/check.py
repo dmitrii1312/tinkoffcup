@@ -33,6 +33,7 @@ def checkBlacklist(zonename, blackzonelist):
     return False
 
 def checkWhitelist(whitelist, start, duration):
+
     nHstart=int(start.strftime("%H"))
     dtHend=start+duration
     nHend=int(dtHend.strftime("%H"))+1
@@ -52,7 +53,7 @@ def countAvailableZonesInInterval(calendars, start, duration):
     return 0
 # @params:
 # interval, data = json_full_config
-def checkInterval(calendar_zones_objs, ievent: interval, data:list) -> tuple:    
+def checkInterval(calendar_zones_objs, ievent: interval, data:list):
 
     zones = list(data['calForZones'].keys())
     blackList = data['black']

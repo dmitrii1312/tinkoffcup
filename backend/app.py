@@ -118,7 +118,7 @@ def agentdav_proxy():
     return response.content, response.status_code, response.headers.items()
 
 def add_work(request):
-    current_tasks= {}
+    current_tasks= []
     # Дата и время начала работ
     start_dateTime = datetime.strptime(str(request.form['startTime']),
                                        "%Y-%m-%dT%H:%M")
@@ -203,7 +203,7 @@ def add_work(request):
     # Creating Object
     work_id = uuid.uuid4()
     for i in request.form['zones']:
-        res, text, current_task= request_to_task(request, work_id, i)
+        res, text, current_task= request_to_task(request, str(work_id), i)
         if res:
             current_tasks.append(current_task)
         else:

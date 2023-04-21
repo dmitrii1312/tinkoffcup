@@ -63,7 +63,7 @@ class CalendarZone:
                           tasktype=type_of_work.work_type,
                           deadline=type_of_work.deadline_time,
                           work_id=type_of_work.work_id)
-        return True
+        return True, type_of_work
 
     def conv_task_to_work(self, event: caldav.objects.CalendarObjectResource):
         res = typeOfWork(work_type=event.icalendar_component["tasktype"], work_id=event.icalendar_component["workid"])
