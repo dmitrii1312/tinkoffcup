@@ -66,16 +66,14 @@ class CalendarZone:
         return True
 
     def conv_task_to_work(self, event: caldav.objects.CalendarObjectResource):
-        return typeOfWork(
-            start_time=event.icalendar_component["dtstart"].dt,
-            end_time=event.icalendar_component["dtend"].dt,
-            duration_time=typeOfWork.set_duration(typeOfWork.calculate_duration()),
-            deadline_time=event.icalendar_component["deadline"].dt,
-            priority=event.icalendar_component["priority"],
-            zone_name=event.calendar.name,
-            work_type=event.icalendar_component["tasktype"],
-            work_id=event.icalendar_component["workid"]
-        )
+        res = typeOfWork(work_type = event.icalendar_component["tasktype"], work_id = event.icalendar_component["workid"])
+        res.start_time=event.icalendar_component["dtstart"].dt,
+        res.end_time=event.icalendar_component["dtend"].dt,
+        res.duration_time=typeOfWork.set_duration(typeOfWork.calculate_duration()),
+        res.deadline_time=event.icalendar_component["deadline"].dt,
+        res.priority=event.icalendar_component["priority"],
+        res.zone_name=event.calendar.name,
+        return res
 
     def get_task(self, start, end):
         return self.calendar.search(start=start, end=end, event=True)
