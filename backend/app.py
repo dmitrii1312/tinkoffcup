@@ -274,10 +274,14 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             k=k+1
 
     for i in whitelist_dt:
+        if i.start > task.deadline_time():
+            continue
         if i.start < task.get_start_time():
             free_start=0
         else:
             free_start = int((i.start-task.get_start_time())//60)
+        if i.end < task.get_start_time():
+            continue
         if i.end > task.get_deadline_time():
             free_end = duration_minutes
         else:
@@ -288,10 +292,15 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
         if i.get_start_time()<task.get_start_time():
             busy_start=0
         else:
-            busy_start = int((i.get_start_time()-task.get_start_time())//60)
+            if i.get_start_time() > task.get_start_time():
+                continue
+            else:
+                busy_start = int((i.get_start_time()-task.get_start_time())//60)
         if i.get_end_time()>task.get_deadline_time():
             busy_end = duration_minutes
         else:
+            if i.get_end_time()< task.get_start_time():
+                continue
             busy_end = (i.get_end_time()-task.get_start_time())//60
         freebusy= fillarray(freebusy,busy_start, busy_end, 1)
     start_index=find_free_space_index(freebusy,int(task.get_duration_time()//60))
@@ -307,7 +316,12 @@ def fillarray(arr:list[int], start, end, num):
     return arr
 
 def conv_whitelist_to_interval(date: datetime, whitelist: str):
-    return None
+    startdate= datetime(year=date.year, month=date.month, day=date.day, hour=0, minute=0)
+    sParts = whitelist.partition("-")
+    nIntStart = startdate + timedelta(hours=(int(sParts[0])-1))
+    nIntEnd = startdate + timedelta(hours=int(sParts[2]))
+    result=interval(start=nIntStart, end=nIntEnd)
+    return result
 
 def validate_request(request):
     return True
