@@ -29,21 +29,13 @@ app = Flask(__name__,
 # Ищем и проверяем существование конфига в корне проекта
 config_path = path.abspath(path.join(__file__, "../../config.json"))
 if not path.exists(config_path):
-<<<<<<< HEAD
     Exception(f"Config {config_path} doesn't exists")
-# Load configuration file for application
-json_config_data = load_config(config_path)
-
-=======
-    print("Config file doesn't exists")
-
 # Получаем весь конфиг
 try:
     with open(config_path, 'r') as json_config:
         json_config_data = json.load(json_config)
 except ValueError:
     raise Exception("Errors in config file") from None
->>>>>>> dnechaev
 
 remote_server = json_config_data['caldav_server']
 username = json_config_data['username']
