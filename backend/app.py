@@ -277,7 +277,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             k=k+1
 
     for i in whitelist_dt:
-        if i.start > task.deadline_time():
+        if i.start > task.get_deadline_time():
             continue
         if i.start < task.get_start_time():
             free_start=0
