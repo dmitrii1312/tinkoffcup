@@ -1,7 +1,7 @@
 import caldav
 from datetime import datetime
 from typeOfWork import typeOfWork
-from icalendar import Calendar
+from icalendar import Calendar, vDatetime
 
 
 class CalendarZone:
@@ -33,7 +33,7 @@ class CalendarZone:
                 summary=summary,
                 priority=priority,
                 tasktype=tasktype,
-                deadline=deadline,
+                deadline=vDatetime(deadline),
                 workid=work_id,
                 rrule={'FREQ': repeat}
             )
@@ -44,7 +44,7 @@ class CalendarZone:
                 summary=summary,
                 priority=priority,
                 tasktype=tasktype,
-                deadline=deadline,
+                deadline=vDatetime(deadline),
                 workid=work_id,
             )
 
@@ -115,6 +115,38 @@ class CalendarZone:
         event.icalendar_component["dtstart"].dt = type_of_work.start_time
         event.icalendar_component["dtend"].dt = type_of_work.end_time
         event.icalendar_component["priority"] = type_of_work.priority
-        event.icalendar_component["deadline"].dt = type_of_work.deadline_time
+        event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "amalyshev")
+# print(obj.get_task(datetime(2023, 2, 18, 1), datetime(2023, 8, 18, 1))[0].data)
+
+# obj.add_task(
+#     start=datetime(2023, 4, 23, 1),
+#     end=datetime(2023, 4, 23, 5),
+#     summary="TASK FOR MODIFY",
+#     priority="99999",
+#     tasktype="auto",
+#     deadline=datetime(2023, 4, 23, 5),
+#     work_id="6")
+
+
+
+#
+task = obj.get_task_by_work_id("6")[0]
+print(task.data)
+
+res = typeOfWork(work_type="auto", work_id="6")
+res.start_time = datetime(2023, 4, 22, 2)
+res.end_time = datetime(2023, 4, 23, 2)
+res.duration_time = datetime(2023, 4, 23, 2) - datetime(2023, 4, 22, 2)
+res.deadline_time = datetime(2023, 4, 26, 2)
+res.priority = "2222222222222222222222"
+res.zone_name = "ZONE3"
+res.summary = "TESTTESTTEST"
+
+obj.modify_task(res)
+
+task1 = obj.get_task_by_work_id("6")[0]
+print(task1.data)
