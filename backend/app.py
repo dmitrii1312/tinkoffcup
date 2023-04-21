@@ -51,7 +51,7 @@ max_deadline = json_config_data['max_deadline']
 # Кратность dict
 multiplicity = json_config_data['multiplicity']
 
-calendar_zones_objs = {}
+calendar_zones_objs = []
 for i in zones:
     calendar_zones_objs[i] = \
         CalendarZone(remote_server, username, password, zones[i])
@@ -258,7 +258,30 @@ def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
                     return newtask
 
 def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWork ):
+    planned_tasks=calendar.get_task_ex(task.get_start_time(),task.get_deadline_time())
+    duration= task.get_deadline_time()-task.get_start_time()
+    duration_minutes = duration.seconds//60
+    freebusy = []
+    for i in range(0,duration_minutes):
+        freebusy[i]=0
+    for i in planned_tasks:
+        if i.get_start_time()<task.get_start_time():
+            busy_start=0
+        else:
+            busy_start = int((i.get_start_time()-task.get_start_time())//60)
+        if i.get_end_time()>task.get_deadline_time():
+            busy_end = duration_minutes
+        else:
+            busy_end = (i.get_end_time()-task.get_start_time())//60
+        freebusy= fillbusy(freebusy,busy_start, busy_end, 1)
+
     return None
+
+
+def fillarray(arr:list[int], start, end, num):
+    for i in range(start,end):
+        arr[i]=num
+    return arr
 
 def validate_request(request):
     return True
