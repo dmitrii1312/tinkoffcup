@@ -313,7 +313,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
     return None
 
 
-def fillarray(arr:list[int], start, end, num):
+def fillarray(arr: List[int], start, end, num):
     for i in range(start,end):
         arr[i]=num
     return arr
@@ -321,7 +321,7 @@ def fillarray(arr:list[int], start, end, num):
 def validate_request(request):
     return True
 
-def find_free_space_index(arr: list[int], duration: int, good_value: int):
+def find_free_space_index(arr: List[int], duration: int, good_value: int):
     k=0
     start=0
     for i in range(0,len(arr)):
