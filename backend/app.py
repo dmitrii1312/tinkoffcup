@@ -291,6 +291,7 @@ def request_to_task(request, work_id: str, zone):
     # Получаем тип работ (ручные, автоматические)
     worktype = str(request.form['typeofWork'])
     workPriority = str(request.form['workPriority'])
+    entered_zone = str(request.form['zones'])
     current_task = typeOfWork(worktype,work_id)
     res, text = current_task.set_start_time(start_dateTime)
     if not res:
