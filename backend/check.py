@@ -3,7 +3,7 @@ from interval import interval
 from datetime import timedelta
 from calendar_zone import CalendarZone
 from icalendar import Event
-
+from datetime import *
 import json
 import os.path as path
 
@@ -20,7 +20,7 @@ import os.path as path
 
 # возвращаем свободно ли в требуемой зоне и в скольки зонах есть места
 def conv_whitelist_to_interval(date: datetime, whitelist: str):
-    startdate= datetime(year=date.year, month=date.month, day=date.day, hour=0, minute=0)
+    startdate= datetime(year=date.year, month=date.month, day=date.day, hour=0, minute=0,tzinfo=pytz.UTC)
     sParts = whitelist.partition("-")
     nIntStart = startdate + timedelta(hours=(int(sParts[0])-1))
     nIntEnd = startdate + timedelta(hours=int(sParts[2]))
