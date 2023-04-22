@@ -77,7 +77,7 @@ class CalendarZone:
         res.start_time = event.icalendar_component["dtstart"].dt
         res.end_time = event.icalendar_component["dtend"].dt
         res.duration_time = res.calculate_duration()
-        res.deadline_time = datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%S")
+        res.deadline_time = datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%SZ")
         res.priority = [key for key, value in self.map_priority.items() if
                         value == event.icalendar_component["priority"]]
         res.zone_name = self.calendar.name
