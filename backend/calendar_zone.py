@@ -93,6 +93,7 @@ class CalendarZone:
     def get_task_ex(self, start, end):
         result = []
         tasks = self.calendar.search(start=start, end=end, event=True)
+        print("TASKS:",tasks)
         if len(tasks) == 0:
             return None
         else:
