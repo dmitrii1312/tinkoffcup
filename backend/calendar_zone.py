@@ -11,6 +11,10 @@ class CalendarZone:
         client = caldav.DAVClient(url, username=username, password=password)
         self.principal = client.principal()
         self.calendar = self.principal.calendar(name=calendar_name)
+        self.map_priority = {
+            "normal": 1,
+            "critical": 2
+        }
 
         if calendar_name is not None:
             # Check that calendar already exists
@@ -24,14 +28,15 @@ class CalendarZone:
         if name not in calendars:
             caldav.CalendarSet.make_calendar(name=name)
 
-    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, summary="", repeat="once",
-                 priority="2", tasktype="auto"):
+    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, priority: str, summary="", repeat="once",
+                 tasktype="auto"):
+
         if repeat != "once":
             event = self.calendar.save_event(
                 dtstart=start,
                 dtend=end,
                 summary=summary,
-                priority=priority,
+                priority=self.map_priority[priority],
                 tasktype=tasktype,
                 deadline=vDatetime(deadline),
                 workid=work_id,
@@ -42,7 +47,7 @@ class CalendarZone:
                 dtstart=start,
                 dtend=end,
                 summary=summary,
-                priority=priority,
+                priority=self.map_priority[priority],
                 tasktype=tasktype,
                 deadline=vDatetime(deadline),
                 workid=work_id,
@@ -71,7 +76,7 @@ class CalendarZone:
         res.end_time = event.icalendar_component["dtend"].dt
         res.duration_time = typeOfWork.set_duration(typeOfWork.calculate_duration())
         res.deadline_time = event.icalendar_component["deadline"].dt
-        res.priority = event.icalendar_component["priority"]
+        res.priority = [key for key, value in self.map_priority.items() if value == event.icalendar_component["priority"]]
         res.zone_name = event.calendar.name
         return res
 
@@ -114,7 +119,7 @@ class CalendarZone:
         event.icalendar_component["summary"] = type_of_work.summary
         event.icalendar_component["dtstart"].dt = type_of_work.start_time
         event.icalendar_component["dtend"].dt = type_of_work.end_time
-        event.icalendar_component["priority"] = type_of_work.priority
+        event.icalendar_component["priority"] = [value for key, value in self.map_priority.items() if key == type_of_work.priority]
         event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
