@@ -29,7 +29,7 @@ class CalendarZone:
         if name not in calendars:
             caldav.CalendarSet.make_calendar(name=name)
 
-    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, priority: str, zipping="0", summary="",
+    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, priority: str, summary="",
                  repeat="once",
                  tasktype="auto"):
 
@@ -42,7 +42,6 @@ class CalendarZone:
                 tasktype=tasktype,
                 deadline=deadline,
                 workid=work_id,
-                zipping=zipping,
                 rrule={'FREQ': repeat}
             )
         else:
@@ -52,9 +51,8 @@ class CalendarZone:
                 summary=summary,
                 priority=self.map_priority[priority],
                 tasktype=tasktype,
-                deadline=deadline,
+                deadline=vDatetime(deadline),
                 workid=work_id,
-                zipping=zipping,
             )
 
     def add_task_ex(self, type_of_work: typeOfWork):
@@ -71,8 +69,7 @@ class CalendarZone:
                           priority=type_of_work.priority,
                           tasktype=type_of_work.work_type,
                           deadline=type_of_work.deadline_time,
-                          work_id=type_of_work.work_id,
-                          zipping=type_of_work.zipping)
+                          work_id=type_of_work.work_id)
         return True, type_of_work
 
     def conv_task_to_work(self, event: caldav.objects.CalendarObjectResource):
@@ -84,7 +81,6 @@ class CalendarZone:
         res.set_priority([key for key, value in self.map_priority.items() if
                           value == event.icalendar_component["priority"]][0])
         res.set_zone_name(self.calendar.name)
-        res.set_zipping(event.icalendar_component["zipping"])
         return res
 
     def get_task(self, start, end):
@@ -130,6 +126,11 @@ class CalendarZone:
                                                  key == type_of_work.priority]
         event.icalendar_component["deadline"] = type_of_work.deadline_time
         event.icalendar_component["tasktype"] = type_of_work.work_type
-        event.icalendar_component["zipping"] = type_of_work.zipping
         event.save()
 
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "tinkoff2")
+tasks = obj.get_task(datetime(2023, 2, 24, 1), datetime(2023, 4, 24, 1))
+# obj.del_task(tasks)
+
+print(tasks)
