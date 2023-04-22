@@ -201,17 +201,22 @@ def add_work(request):
     # Creating Object
     work_id = uuid.uuid4()
     for i in entered_zone:
-        res, text, current_task= request_to_task(request, str(work_id), i)
+        res, text, current_task = request_to_task(request, str(work_id), i)
+        print("TEXT", text)
         if res:
             current_tasks.append(current_task)
 
+
+    print("CURRENT_TASKS", current_tasks)
     # triing to save task object
     task_to_reschedule = []
     task_with_ok = []
 
     for i in current_tasks:
         if len(calendar_zones_objs[i.zone_name].get_task_ex(i.get_start_time(),i.get_end_time())) !=0:
-            res, new_task = find_time_for_task(calendar_zones_objs[i.zone_name],whitelist[i.zone_name],i)
+            print("I_ZONE: ", i.zone_name)
+            res, new_task = find_time_for_task(calendar_zones_objs[i.zone_name],
+                                               whitelist[i.zone_name], i)
             if res:
                 task_to_reschedule.append(new_task)
             else:
