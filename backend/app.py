@@ -39,9 +39,9 @@ except ValueError:
     raise Exception("Errors in config file") from None
 
 remote_server = json_config_data['caldav_server']
+print("REMOTE:::: ", remote_server)
 username = json_config_data['username']
 password = json_config_data['password']
-
 zones = json_config_data['calForZones']
 
 nFreeZones = int(json_config_data['zoneAvailable'])
@@ -58,8 +58,9 @@ multiplicity = json_config_data['multiplicity']
 # zone = spb -> zone[spb] = имя календаря
 calendar_zones_objs = {}
 for i in zones:
+    print("ZONALIAS: ", zones[i])
     calendar_zones_objs[i] = \
-        CalendarZone(remote_server, username, password, zones[i])
+        CalendarZone(remote_server, username, password)  # , zones[i])
 
 for i in zones.keys():
     try:
@@ -100,7 +101,10 @@ def index():
                            error_message=error_message)
 
 
-@app.route("/admin/<path:path>/", methods=['OPTIONS', 'GET', 'POST', 'PUT', 'DELETE', 'PROPFIND', 'MKCALENDAR', 'REPORT'])
+@app.route("/admin/<path:path>/",
+           methods=['OPTIONS', 'GET', 'POST', 'PUT',
+                    'DELETE', 'PROPFIND', 'MKCALENDAR',
+                    'REPORT'])
 def not_proxy(path):
     headers = {key: value for (key, value) in request.headers if key != 'Host'}
     res = requests.request(
@@ -426,4 +430,4 @@ def request_to_task(request, work_id: str, zone):
     return True, "OK", current_task
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

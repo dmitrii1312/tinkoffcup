@@ -1,6 +1,6 @@
 {
-    "caldav_server": "http://tsquared.keenetic.pro:5232",
-    "webcal_server": "http://tsquared.keenetic.pro:8081",
+    "caldav_server": "http://radicale:5232",
+    "webcal_server": "http://agendav:8085",
     "username": "admin",
     "password": "admin",
     "calForZones": {
