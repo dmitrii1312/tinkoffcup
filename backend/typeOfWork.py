@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from datetime import timedelta
+import pytz
 import time
 
 """
@@ -54,7 +55,10 @@ class typeOfWork:
         if starttime < now:
             return False, "Can't plan task in the past"
         else:
-            self.start_time = starttime
+            if starttime.tzinfo == None:
+                self.start_time = starttime.replace(tzinfo=pytz.UTC)
+            else:
+                self.start_time = starttime
         return True, "OK"
 
 # TODO: Нужно проверить, что максимальное время не равно 0, так же нужно придумать значение, которое будет считаться некорректным(устанавливаться в случае некорректного значения длительности)
@@ -67,8 +71,15 @@ class typeOfWork:
             self.duration_time = -1
             return False, text
 
+    def set_duration_ex(self, duration:timedelta):
+        self.duration_time=duration
+        return True, "OK"
+
     def set_end_time(self, end_time: datetime):
-        self.end_time = end_time
+        if end_time.tzinfo == None:
+            self.end_time = end_time.replace(tzinfo=pytz.UTC)
+        else:
+            self.end_time = end_time
         return True, "OK"
 
     def calculate_end_time(self):
@@ -83,7 +94,10 @@ class typeOfWork:
         if self.end_time > deadline:
             return False, "Deadline is too early"
         else:
-            self.deadline_time = deadline
+            if deadline.tzinfo == None:
+                self.deadline_time = deadline.replace(tzinfo=pytz.UTC)
+            else:
+                self.deadline_time = deadline
             return True, "OK"
 
 
