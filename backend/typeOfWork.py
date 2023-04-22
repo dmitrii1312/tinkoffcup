@@ -52,7 +52,11 @@ class typeOfWork:
             return True, "Duration is compatible"
 
     def set_start_time(self, starttime: datetime):
+        if starttime.tzinfo == None:
+            starttime=starttime.replace(tzinfo=pytz.UTC)
         now = datetime.now()
+        if now.tzinfo == None:
+            now=now.replace(tzinfo=pytz.UTC)
         if starttime < now:
             return False, "Can't plan task in the past"
         else:

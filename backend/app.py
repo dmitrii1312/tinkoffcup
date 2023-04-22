@@ -116,17 +116,15 @@ def not_proxy(path):
         headers=headers,
         data=request.get_data(),
         cookies=request.cookies,
-        allow_redirects=False,
+        allow_redirects=True,
         auth=('admin', 'admin'),
         verify=False
     )
 
-    print(res.content, res.status_code, res.headers.items())
     res_headers = {k: v for k, v in res.headers.items() if
                    k.lower() not in ['content-encoding', 'transfer-encoding', 'connection']}
 
     response = Response(res.content, res.status_code, res_headers.items())
-
     return response
 
 
@@ -144,19 +142,17 @@ def proxy(path):
         headers=headers,
         data=request.get_data(),
         cookies=request.cookies,
-        allow_redirects=False,
+        allow_redirects=True,
         auth=('admin', 'admin'),
         verify=False
     )
-
-    print(res.content, res.status_code, res.headers.items())
 
     res_headers = {k: v for k, v in res.headers.items() if
                    k.lower() not in ['content-encoding',
                                      'transfer-encoding',
                                      'connection']}
-    #
     response = Response(res.content, res.status_code, res_headers.items())
+    print("DATA::::::::", response)
     return response
 
 
@@ -206,8 +202,6 @@ def add_work(request):
         # Проверка на кратность
         multiplicity_minutes = int(parse_timedelta(
             multiplicity[worktype]).total_seconds()/60)
-        print("AAA", multiplicity_minutes)
-        print("BBB: ", start_time_only)
         if start_time_only % multiplicity_minutes > 0:
             error_message = (f"Ошибка, ручные работы должны быть "
                              f"кратны {multiplicity[worktype]}")
@@ -222,7 +216,6 @@ def add_work(request):
     if deadline_duration > parse_timedelta(max_deadline):
         error_message = (f"Ошибка, дедлайн не может превышать "
                          f"{max_deadline}")
-        
     
 
     # Если со временем всё ок, создаем объект интервала
