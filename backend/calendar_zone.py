@@ -124,3 +124,40 @@ class CalendarZone:
         event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
+
+
+#============================
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "amalyshev")
+# task = obj.get_task(datetime(2023, 2, 18, 10), datetime(2023, 4, 24, 19))[0]
+# print(task.data)
+# obj.del_task(task)
+# obj.add_task(
+#     start=datetime(2023, 4, 24, 1),
+#     end=datetime(2023, 4, 24, 5),
+#     summary="TASK FOR MODIFY",
+#     priority="normal",
+#     tasktype="auto",
+#     deadline=datetime(2023, 4, 23, 5),
+#     work_id="6")
+
+# print(obj.get_task(datetime(2023, 4, 24, 1), datetime(2023, 4, 24, 15))[0].data)
+
+
+#
+# task = obj.get_task_by_work_id("6")[0]
+# print(task.data)
+
+# res = typeOfWork(work_type="auto", work_id="6")
+# res.start_time = datetime(2023, 4, 22, 2)
+# res.end_time = datetime(2023, 4, 23, 2)
+# res.duration_time = datetime(2023, 4, 23, 2) - datetime(2023, 4, 22, 2)
+# res.deadline_time = datetime(2023, 4, 26, 2)
+# res.priority = "2222222222222222222222"
+# res.zone_name = "ZONE3"
+# res.summary = "TESTTESTTEST"
+#
+# obj.modify_task(res)
+#
+# task1 = obj.get_task_by_work_id("6")[0]
+# print(task1.data)
