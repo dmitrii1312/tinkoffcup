@@ -100,25 +100,58 @@ def index():
                            error_message=error_message)
 
 
-@app.route('/agentdav/',
-           methods=['GET', 'POST', 'PUT', 'DELETE', 'PROPFIND', 'MKCALENDAR'])
-def agentdav_proxy():
-    url = remote_server + request.full_path.replace('/agentdav', '')
-    print(url)
+@app.route("/admin/<path:path>/", methods=['OPTIONS', 'GET', 'POST', 'PUT', 'DELETE', 'PROPFIND', 'MKCALENDAR', 'REPORT'])
+def not_proxy(path):
     headers = {key: value for (key, value) in request.headers if key != 'Host'}
-    headers['Content-Type'] = request.content_type or 'text/plain'
-
-    response = requests.request(
+    res = requests.request(
         method=request.method,
-        url=url,
+        url=remote_server + 'admin/' + path,
         headers=headers,
         data=request.get_data(),
+        cookies=request.cookies,
+        allow_redirects=False,
         auth=('admin', 'admin'),
-        verify=False,
+        verify=False
     )
-    
-    print(response.content, response.status_code, response.headers.items())
-    return response.content, response.status_code, response.headers.items()
+
+    print(res.content, res.status_code, res.headers.items())
+    res_headers = {k: v for k, v in res.headers.items() if
+                   k.lower() not in ['content-encoding', 'transfer-encoding', 'connection']}
+
+    response = Response(res.content, res.status_code, res_headers.items())
+
+    return response
+
+
+@app.route("/agendav/<path:path>",
+           methods=['OPTIONS', 'GET', 'POST',
+                    'PUT', 'DELETE', 'PROPFIND',
+                    'MKCALENDAR', 'REPORT'])
+def proxy(path):
+
+    headers = {key: value for (key, value) in request.headers if key != 'Host'}
+
+    res = requests.request(
+        method=request.method,
+        url=remote_server + path,
+        headers=headers,
+        data=request.get_data(),
+        cookies=request.cookies,
+        allow_redirects=False,
+        auth=('admin', 'admin'),
+        verify=False
+    )
+
+    print(res.content, res.status_code, res.headers.items())
+
+    res_headers = {k: v for k, v in res.headers.items() if
+                   k.lower() not in ['content-encoding',
+                                     'transfer-encoding',
+                                     'connection']}
+    #
+    response = Response(res.content, res.status_code, res_headers.items())
+    return response
+
 
 
 def add_work(request):
