@@ -11,12 +11,14 @@
   <nav>
     <ul>
       <li><a href="/">Планировщик</a></li>
-      <li><a href="#">Информация</a></li>
+      <li><a href="{{ url_for('remove') }}">Удаление задач</a></li>
+      <li><a href="{{ url_for('modify') }}">Изменение расписания</a></li>
     </ul>
     <button class="logout">Выход</button>
   </nav>
   <main>
     <div class="body">
+      {% block bodyform %}
       <form action="/" method="post">
 
         {% if error_message %}
@@ -32,7 +34,6 @@
 
           <label for="deadline">Дедлайн:</label>
             <input type="datetime-local" id="deadline" name="deadline" required>
-
           <label for="zones">Зона доступности:</label>
             <select id="zones" name="zones" multiple>
               {% for option in data.zones %}
@@ -59,6 +60,7 @@
             <input type=number name="zipping" min=0 max=100>
         </div>
         <input type="submit" value="Отправить">
+        {% endblock %}
       </form>
     </div>
   </main>

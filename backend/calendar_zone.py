@@ -101,9 +101,6 @@ class CalendarZone:
         event_component = cal.walk('VEVENT')[0]
         return event_component.get('WORKID')
 
-    def get_existing_cals(self):
-        return self.principal.calendars()
-
     def get_task_by_work_id(self, work_id: str):
         events = self.calendar.events()
         list_of_event = []

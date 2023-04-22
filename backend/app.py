@@ -22,7 +22,6 @@ from typeOfWork import typeOfWork
 import uuid
 
 
-
 # Ищем и проверяем существование конфига в корне проекта
 config_path = path.abspath(path.join(__file__, "../../config.json"))
 if not path.exists(config_path):
@@ -88,6 +87,17 @@ app = Flask(__name__,
 
 
 # READ CONFIG JSON
+@app.route('/modify', methods=['GET', 'POST'])
+def modify():
+    delete_data = "NULL"
+    return render_template('modify.html', delete_data=delete_data)
+
+
+@app.route('/remove', methods=['GET', 'POST'])
+def remove():
+    removed_data = "NULL"
+    return render_template('remove.html', removed_data=removed_data)
+
 @app.route('/planner', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -152,7 +162,6 @@ def proxy(path):
                                      'transfer-encoding',
                                      'connection']}
     response = Response(res.content, res.status_code, res_headers.items())
-    print("DATA::::::::", response)
     return response
 
 
