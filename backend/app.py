@@ -204,12 +204,11 @@ def add_work(request):
     work_id = uuid.uuid4()
     for i in entered_zone:
         res, text, current_task = request_to_task(request, str(work_id), i)
-        print("TEXT", text)
         if res:
             current_tasks.append(current_task)
+        else:
+            return res, text
 
-
-    print("CURRENT_TASKS", current_tasks)
     # triing to save task object
     task_to_reschedule = []
     task_with_ok = []
