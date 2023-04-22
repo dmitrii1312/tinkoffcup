@@ -127,8 +127,3 @@ class CalendarZone:
         event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
-
-
-obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "tinkoff")
-task = obj.get_task(datetime(2023, 4, 26, 1), datetime(2023, 4, 26, 19))[0]
-print(task.data)
