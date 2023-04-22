@@ -231,6 +231,7 @@ def add_work(request):
 
     return True, "OK"
 
+
 def cancel_task(request):
     work_id = request.form['work_id']
     for calendar in calendar_zones_objs:
