@@ -241,24 +241,14 @@ def reschedule_work(request):
 
 def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
     newtask = task
-    tasks = calendar.get_tasks(task)
-    for itask in tasks:
-        newtask.set_start_time(itask.get_end_time())
+    tasks = calendar.get_task_ex(task.get_start_time(),task.get_deadline_time())
+    freeintervals = find_intervals_by_duration (calendar, whitelist, newtask)
+    if len(freeintervals) == 0:
+        return None
+    else:
+        newtask.set_start_time(freeintervals[0].start)
         newtask.set_end_time(newtask.calculate_end_time())
-        if newtask.get_deadline_time()<newtask.get_end_time():
-            return None
-        n = calendar.get_tasks(newtask)
-        if len(n) == 0:
-            if checkWhitelist(whitelist, newtask.get_start_time(), newtask.get_duration_time()):
-                return newtask
-            else:
-                freeintervals = find_intervals_by_duration (calendar, whitelist, newtask)
-                if len(freeintervals) == 0:
-                    return None
-                else:
-                    newtask.set_start_time(freeintervals[0].start)
-                    newtask.set_end_time(newtask.calculate_end_time())
-                    return newtask
+        return newtask
 
 def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWork ):
     planned_tasks=calendar.get_task_ex(task.get_start_time(),task.get_deadline_time())
