@@ -1,0 +1,64 @@
+version: "3.3"
+services:
+    radicale:
+        image: docker.io/tomsquest/docker-radicale:3.1.8.2
+        networks:
+            - allnets
+        deploy:
+            resources:
+                limits:
+                    memory: 500M
+                reservations:
+                    memory: 500M
+        ports:
+                - "5232:5232"
+        hostname: "radicale"
+        tty: true
+        stdin_open: true
+        volumes:
+                - "./radicale/data:/data"
+        env_file:
+                - ./radicale/radicale.env
+    agendav:
+        image: nagimov/agendav-docker:2.2.0
+        networks:
+            - allnets
+        deploy:
+            resources:
+                limits:
+                    memory: 1024M
+                reservations:
+                    memory: 1024M
+        ports:
+                - "8085:80"
+        hostname: "agendav"
+        tty: true
+        stdin_open: true
+        env_file:
+                - ./agendav/agendav.env
+    flask:
+        build: ./flask/
+        networks:
+            - allnets
+        deploy:
+            resources:
+                limits:
+                    memory: 1024M
+                reservations:
+                    memory: 1024M
+        ports:
+                - "8080:8080"
+        hostname: "flask"
+        tty: true
+        stdin_open: true
+        volumes:
+                - "./tinkoffcupfinal/backend:/app/backend"
+                - "./tinkoffcupfinal/frontend:/app/frontend"
+                - "./tinkoffcupfinal/templates:/app/templates"
+                - "./tinkoffcupfinal/static:/app/static"
+                - "./tinkoffcupfinal/requirements.txt:/app/requirements.txt"
+                - "./tinkoffcupfinal/config.json:/app/config.json"
+        env_file:
+                - ./flask/flask.env
+networks:
+  allnets:
