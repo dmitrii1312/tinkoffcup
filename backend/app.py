@@ -126,6 +126,7 @@ def add_work(request):
     start_dateTime = datetime.strptime(str(request.form['startTime']),
                                        "%Y-%m-%dT%H:%M")
 
+    print("START_DATETIME: ", start_dateTime)
     # Для проверки начала работ на кратность
     start_time_only = start_dateTime.hour * 60 + start_dateTime.minute
 
@@ -138,17 +139,11 @@ def add_work(request):
                                  "%Y-%m-%dT%H:%M")
 
     # Длительность дедлайна
-    deadline_duration = deadline - start_dateTime
+    deadline_duration = deadline - start_dateTime  # datetime
     duration = timedelta(hours=work_duration.hour,
                          minutes=work_duration.minute)
-    new_dateTime = start_dateTime + duration
+    new_dateTime = start_dateTime + duration  # datetime
 
-    # Минимальная длительность работ
-    # 10:00 - 09:00 = 1ч
-    minMax_duration = start_dateTime - work_duration
-    # Максимальная длительность работ
-    # 
-    # Получаем тип работ (ручные, автоматические)
     worktype = str(request.form['typeofWork'])
     workPriority = str(request.form['workPriority'])
 
@@ -161,11 +156,11 @@ def add_work(request):
     """
     if worktype == 'auto':
         # Для минимальных работ
-        if minMax_duration < parse_timedelta(min_time[worktype]):
+        if duration < parse_timedelta(min_time[worktype]):
             error_message = (f"Ошибка, автоматические работы не могут "
                              f"быть меньше {min_time[worktype]}")
     elif worktype == 'manual':
-        if minMax_duration < parse_timedelta(min_time[worktype]):
+        if duration < parse_timedelta(min_time[worktype]):
             error_message = (f"Ошибка, ручные работы не могут быть "
                              f"меньше {min_time[worktype]}")
         # Проверка на кратность
@@ -179,7 +174,7 @@ def add_work(request):
 
     # Провека для ОБЫЧНЫХ максимальных работ
     if workPriority == 'normal':
-        if (minMax_duration >
+        if (duration >
            parse_timedelta(max_time[worktype][workPriority])):
             error_message = (f"Ошибка, максимальное время не может быть "
                              f"больше {max_time[worktype][workPriority]}")
@@ -342,9 +337,8 @@ def request_to_task(request, work_id: str, zone):
 
     # Длительность работ
     work_duration = datetime.strptime(str(request.form['durationTime']),
-                                 "%H:%M")
+                                      "%H:%M")
 
-    print("END: ", work_duration)
     # Дедлайн
     deadline = datetime.strptime(str(request.form['deadline']),
                                  "%Y-%m-%dT%H:%M")
@@ -352,11 +346,11 @@ def request_to_task(request, work_id: str, zone):
     deadline_duration = deadline - start_dateTime
     duration = timedelta(hours=work_duration.hour,
                          minutes=work_duration.minute)
+    print("DURATION: ", duration)
     new_dateTime = start_dateTime + duration
 
     # Минимальная длительность работ
     # 10:00 - 09:00 = 1ч
-    minMax_duration = start_dateTime - work_duration
     # Максимальная длительность работ
     #
     # Получаем тип работ (ручные, автоматические)
