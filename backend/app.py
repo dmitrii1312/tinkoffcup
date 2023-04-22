@@ -95,6 +95,10 @@ def modify():
 @app.route('/remove', methods=['GET', 'POST'])
 def remove():
     removed_data = "NULL"
+    now = datetime.now()
+    ends_tt = datetime.strptime("2024-04-01T00:00", "%Y-%m-%dT%H:%M")
+    for i in calendar_zones_objs:
+        print(i.values().get_task_ex(now, ends_tt))
     return render_template('remove.html', removed_data=removed_data)
 
 @app.route('/planner', methods=['GET', 'POST'])

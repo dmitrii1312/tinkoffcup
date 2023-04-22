@@ -89,7 +89,6 @@ class CalendarZone:
     def get_task_ex(self, start, end):
         result = []
         tasks = self.calendar.search(start=start, end=end, event=True)
-        print("TASKS:",tasks)
         if len(tasks) == 0:
             return None
         else:
@@ -127,8 +126,4 @@ class CalendarZone:
         event.save()
 
 
-obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "tinkoff2")
-tasks = obj.get_task(datetime(2023, 2, 24, 1), datetime(2023, 4, 24, 1))
-# obj.del_task(tasks)
 
-print(tasks)
