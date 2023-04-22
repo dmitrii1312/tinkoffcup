@@ -11,6 +11,7 @@ class CalendarZone:
         client = caldav.DAVClient(url, username=username, password=password)
         self.principal = client.principal()
         self.calendar = self.principal.calendar(name=calendar_name)
+
         self.map_priority = {
             "normal": 1,
             "critical": 2
