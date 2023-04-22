@@ -60,7 +60,7 @@ calendar_zones_objs = {}
 for i in zones:
     print("ZONALIAS: ", zones[i])
     calendar_zones_objs[i] = \
-        CalendarZone(remote_server, username, password)  # , zones[i])
+        CalendarZone(str(remote_server).strip(), username, password)  # , zones[i])
 
 for i in zones.keys():
     try:
