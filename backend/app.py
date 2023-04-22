@@ -304,8 +304,9 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
     retval=[]
     oneday=timedelta(days=1)
     k=0
+    print("DURATION MINUTES:", duration_minutes)
     for i in range(0,duration_minutes):
-        freebusy[i]=1
+        freebusy.append(1)
 
     for i in whitelist:
         while k*oneday<(duration+oneday) :
