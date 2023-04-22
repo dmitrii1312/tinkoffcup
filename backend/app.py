@@ -21,10 +21,6 @@ from manualWork import manualWork
 from typeOfWork import typeOfWork
 import uuid
 
-# Start Flask application
-app = Flask(__name__,
-            template_folder='../templates',
-            static_folder='../static')
 
 
 # Ищем и проверяем существование конфига в корне проекта
@@ -39,7 +35,6 @@ except ValueError:
     raise Exception("Errors in config file") from None
 
 remote_server = json_config_data['caldav_server']
-print("REMOTE:::: ", remote_server)
 username = json_config_data['username']
 password = json_config_data['password']
 zones = json_config_data['calForZones']
@@ -56,11 +51,15 @@ multiplicity = json_config_data['multiplicity']
 
 # Объекты типа календарь, сформированные на основе
 # zone = spb -> zone[spb] = имя календаря
-calendar_zones_objs = {}
-for i in zones:
-    print("ZONALIAS: ", zones[i])
-    calendar_zones_objs[i] = \
-        CalendarZone(str(remote_server).strip(), username, password)  # , zones[i])
+time.sleep(5)
+try:
+    calendar_zones_objs = {}
+    for i in zones:
+        print("ZONALIAS: ", zones[i])
+        calendar_zones_objs[i] = \
+            CalendarZone(str(remote_server).strip(), username, password)  # , zones[i])
+except Exception:
+    print("WHOOPS")
 
 for i in zones.keys():
     try:
@@ -82,6 +81,10 @@ data = {
     'zones': list(calendar_zones_objs.keys()),
     'calLink': json_config_data['webcal_server']
 }
+# Start Flask application
+app = Flask(__name__,
+            template_folder='../templates',
+            static_folder='../static')
 
 
 # READ CONFIG JSON
@@ -155,7 +158,6 @@ def proxy(path):
     #
     response = Response(res.content, res.status_code, res_headers.items())
     return response
-
 
 
 def add_work(request):
@@ -324,6 +326,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             free_start=0
         else:
             dtime = i.start-task.get_start_time()
+
             free_start = dtime.seconds//60
         if i.end < task.get_start_time():
             continue
