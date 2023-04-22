@@ -74,13 +74,13 @@ class CalendarZone:
 
     def conv_task_to_work(self, event: caldav.objects.CalendarObjectResource):
         res = typeOfWork(work_type=event.icalendar_component["tasktype"], work_id=event.icalendar_component["workid"])
-        res.start_time = event.icalendar_component["dtstart"].dt
-        res.end_time = event.icalendar_component["dtend"].dt
-        res.duration_time = res.calculate_duration()
-        res.deadline_time = datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%SZ")
-        res.priority = [key for key, value in self.map_priority.items() if
-                        value == event.icalendar_component["priority"]]
-        res.zone_name = self.calendar.name
+        res.set_start_time(event.icalendar_component["dtstart"].dt)
+        res.set_end_time(event.icalendar_component["dtend"].dt)
+        res.set_duration(res.calculate_duration())
+        res.set_deadline((datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%SZ")))
+        res.set_priority([key for key, value in self.map_priority.items() if
+                          value == event.icalendar_component["priority"]][0])
+        res.set_zone_name(self.calendar.name)
         return res
 
     def get_task(self, start, end):
@@ -113,7 +113,7 @@ class CalendarZone:
         return list_of_event
 
     @staticmethod
-    def del_task(events: caldav.Event):
+    def del_task(events: caldav.objects.CalendarObjectResource):
         for event in events:
             event.delete()
 
@@ -124,6 +124,13 @@ class CalendarZone:
         event.icalendar_component["dtend"].dt = type_of_work.end_time
         event.icalendar_component["priority"] = [value for key, value in self.map_priority.items() if
                                                  key == type_of_work.priority]
-        event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
+        event.icalendar_component["deadline"] = type_of_work.deadline_time
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
+
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "tinkoff2")
+tasks = obj.get_task(datetime(2023, 2, 24, 1), datetime(2023, 4, 24, 1))
+# obj.del_task(tasks)
+
+print(tasks)
