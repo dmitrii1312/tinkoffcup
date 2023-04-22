@@ -91,6 +91,8 @@ class typeOfWork:
         return duration
 
     def set_deadline(self, deadline: datetime):
+        if deadline.tzinfo == None:
+            deadline = deadline.replace(tzinfo=pytz.UTC)
         if self.end_time > deadline:
             return False, "Deadline is too early"
         else:
