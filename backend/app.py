@@ -351,7 +351,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
     start_index=find_free_space_index(freebusy, dur_task.seconds//60,0)
     if start_index != -1:
         starttime_delta=timedelta(minutes=start_index)
-        retval.append(interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.duration))
+        retval.append(interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.get_duration_time()))
         return retval
     return None
 
