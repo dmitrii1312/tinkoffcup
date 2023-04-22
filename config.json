@@ -1,0 +1,49 @@
+{
+    "caldav_server": "http://radicale:5232/",
+    "webcal_server": "http://agendav:8085",
+    "username": "admin",
+    "password": "admin",
+    "calForZones": {
+        "Saint-Petersburg": "tinkoff",
+        "Moscow": "tinkoff2",
+        "Novosibirsk": "tinkoff3",
+        "Sochi": "tinkoff4"
+    },
+    "white": {
+        "Saint-Petersburg": ["1-4", "5-8"],
+        "Moscow": ["2-5", "6-9"],
+        "Novosibirsk": ["1-9"],
+	"Sochi": ["1-9"]
+    },
+    "black": ["zone3", "zone4"],
+    "zoneAvailable": "2",
+    "pause": {
+        "Saint-Petersburg": "15m",
+        "Moscow": "10m",
+	"Novosibirsk": "10m",
+	"Sochi": "10m"
+    },
+    "min_long": {
+	"auto": "5m",
+	"manual": "30m"
+    },
+    "work_step": {
+	"auto": "1m",
+	"manual": "5m"
+    },
+    "max_long": {
+        "auto": {
+            "normal": "6h",
+            "critical": "0"
+        },
+        "manual": {
+            "normal": "6h",
+            "critical": "0"
+        }
+    },
+    "max_deadline": "4w",
+    "multiplicity": {
+        "manual": "5m",
+        "auto": "1m"
+    }
+}

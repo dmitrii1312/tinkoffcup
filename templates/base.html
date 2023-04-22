@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Планировщик задач</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+  <header>Планировщик задач 1.0</header>
+  <nav>
+    <ul>
+      <li><a href="/">Планировщик</a></li>
+      <li><a href="{{ url_for('remove') }}">Удаление задач</a></li>
+      <li><a href="{{ url_for('modify') }}">Изменение расписания</a></li>
+    </ul>
+    <button class="logout">Выход</button>
+  </nav>
+  <main>
+    <div class="body">
+      {% block bodyform %}
+      <form action="/" method="post">
+
+        {% if error_message %}
+          <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+        {% endif %}
+
+        <div class="inputs">
+          <label for="startTime">Дата и время начала работ:</label>
+            <input type="datetime-local" id="startTime" name="startTime" required>
+
+          <label for="durationTime">Длительность работ:</label>
+            <input type="time" id="durationTime" name="durationTime"  required>
+
+          <label for="deadline">Дедлайн:</label>
+            <input type="datetime-local" id="deadline" name="deadline" required>
+          <label for="zones">Зона доступности:</label>
+            <select id="zones" name="zones" multiple>
+              {% for option in data.zones %}
+                <option value="{{ option }}">{{ option }}</option>
+              {% endfor %}
+            </select>
+
+          <label for="typeofWork">Тип работ:</label>
+            <select id="typeofWork" name="typeofWork">
+              <option value="manual">ручные</option>
+              <option value="auto">автоматические</option>
+            </select>
+
+          <label for="workPriority">Приоритет работ:</label>
+            <select id="workPriority" name="workPriority">
+              <option value="normal">обычные</option>
+              <option value="critical">критические</option>
+            </select>
+
+          <label for="summary">Описание работ:</label>
+            <input type="text" id="summary" name="summary" required>
+
+          <label for="summary">Сжимаемость: </label>
+            <input type=number name="zipping" min=0 max=100>
+        </div>
+        <input type="submit" value="Отправить">
+        {% endblock %}
+      </form>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{{- if .Values.persistentVolume.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "scheduler.fullname" . }}
+  labels:
+    {{- include "scheduler.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.persistentVolume.storageClass }}
+  storageClassName: {{ .Values.persistentVolume.storageClass }}
+  {{- end }}
+  {{- if not .Values.persistentVolume.randomVolumeName }}
+  volumeName: {{ include "scheduler.fullname" . }}
+  {{- end }}
+  accessModes: {{ .Values.persistentVolume.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistentVolume.size }}
+{{- end }}
+
+
+

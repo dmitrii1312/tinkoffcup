@@ -1,0 +1,32 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "scheduler.fullname" . }}
+  labels:
+    {{- include "scheduler.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ include "scheduler.url" . }}`)
+      kind: Rule
+      services:
+        - name: {{ include "scheduler.fullname" . }}
+          port: {{ .Values.service.port }}
+          sticky:
+            cookie:
+              httpOnly: true
+  {{- if .Values.ingress.tls.enable }}
+  tls:
+    {{- if .Values.ingress.tls.secretName }}
+    secretName: {{ .Values.ingress.tls.secretName }}
+    {{- else }}
+    certResolver: default
+    {{- end }}
+  {{- end }}
+{{- end }}
