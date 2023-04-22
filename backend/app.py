@@ -119,8 +119,9 @@ def agentdav_proxy():
     print(response.content, response.status_code, response.headers.items())
     return response.content, response.status_code, response.headers.items()
 
+
 def add_work(request):
-    current_tasks= []
+    current_tasks = []
     # Дата и время начала работ
     start_dateTime = datetime.strptime(str(request.form['startTime']),
                                        "%Y-%m-%dT%H:%M")
@@ -129,22 +130,22 @@ def add_work(request):
     start_time_only = start_dateTime.hour * 60 + start_dateTime.minute
 
     # Длительность работ
-    end_time = datetime.strptime(str(request.form['durationTime']),
-                                 "%Y-%m-%dT%H:%M")
+    work_duration = datetime.strptime(str(request.form['durationTime']),
+                                      "%H:%M")
 
     # Дедлайн
     deadline = datetime.strptime(str(request.form['deadline']),
                                  "%Y-%m-%dT%H:%M")
 
+    # Длительность дедлайна
     deadline_duration = deadline - start_dateTime
-    print(deadline_duration)
-
-    duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
+    duration = timedelta(hours=work_duration.hour,
+                         minutes=work_duration.minute)
     new_dateTime = start_dateTime + duration
 
     # Минимальная длительность работ
     # 10:00 - 09:00 = 1ч
-    minMax_duration = end_time - start_dateTime
+    minMax_duration = start_dateTime - work_duration
     # Максимальная длительность работ
     # 
     # Получаем тип работ (ручные, автоматические)
@@ -190,7 +191,7 @@ def add_work(request):
     
 
     # Если со временем всё ок, создаем объект интервала
-    entered_zone = str(request.form['zones'])
+    entered_zone = list(request.form['zones'])
     interval_obj = interval(
         start_dateTime,
         new_dateTime,
@@ -342,28 +343,29 @@ def request_to_task(request, work_id: str, zone):
     start_time_only = start_dateTime.hour * 60 + start_dateTime.minute
 
     # Длительность работ
-    end_time = datetime.strptime(str(request.form['durationTime']),
-                                 "%Y-%m-%dT%H:%M")
+    work_duration = datetime.strptime(str(request.form['durationTime']),
+                                 "%H:%M")
 
+    print("END: ", work_duration)
     # Дедлайн
     deadline = datetime.strptime(str(request.form['deadline']),
                                  "%Y-%m-%dT%H:%M")
 
     deadline_duration = deadline - start_dateTime
-
-    duration = timedelta(hours=end_time.hour, minutes=end_time.minute)
+    duration = timedelta(hours=work_duration.hour,
+                         minutes=work_duration.minute)
     new_dateTime = start_dateTime + duration
 
     # Минимальная длительность работ
     # 10:00 - 09:00 = 1ч
-    minMax_duration = end_time - start_dateTime
+    minMax_duration = start_dateTime - work_duration
     # Максимальная длительность работ
     #
     # Получаем тип работ (ручные, автоматические)
     worktype = str(request.form['typeofWork'])
     workPriority = str(request.form['workPriority'])
     entered_zone = str(request.form['zones'])
-    current_task = typeOfWork(worktype,work_id)
+    current_task = typeOfWork(worktype, work_id)
     res, text = current_task.set_start_time(start_dateTime)
     if not res:
         return res, text, None

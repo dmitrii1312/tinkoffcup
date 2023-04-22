@@ -28,13 +28,13 @@
             <input type="datetime-local" id="startTime" name="startTime" required>
 
           <label for="durationTime">Длительность работ:</label>
-            <input type="datetime-local" id="durationTime" name="durationTime"  required>
+            <input type="time" id="durationTime" name="durationTime"  required>
 
           <label for="deadline">Дедлайн:</label>
             <input type="datetime-local" id="deadline" name="deadline" required>
 
           <label for="zones">Зона доступности:</label>
-            <select id="zones" name="zones">
+            <select id="zones" name="zones" multiple>
               {% for option in data.zones %}
                 <option value="{{ option }}">{{ option }}</option>
               {% endfor %}
