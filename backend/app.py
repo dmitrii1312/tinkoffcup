@@ -41,7 +41,9 @@ except ValueError:
 remote_server = json_config_data['caldav_server']
 username = json_config_data['username']
 password = json_config_data['password']
+
 zones = json_config_data['calForZones']
+
 nFreeZones = int(json_config_data['zoneAvailable'])
 whitelist = json_config_data['white']
 blacklist = json_config_data['black']
@@ -52,19 +54,18 @@ max_deadline = json_config_data['max_deadline']
 # Кратность dict
 multiplicity = json_config_data['multiplicity']
 
-
+# Объекты типа календарь, сформированные на основе
+# zone = spb -> zone[spb] = имя календаря
 calendar_zones_objs = {}
 for i in zones:
     calendar_zones_objs[i] = \
         CalendarZone(remote_server, username, password, zones[i])
-
 
 for i in zones.keys():
     try:
         whitelist[i]
     except KeyError:
         raise Exception("White list not for all zones")
-
 
 i = len(zones)-len(blacklist)
 if i < nFreeZones:
@@ -186,8 +187,8 @@ def add_work(request):
     
 
     # Если со временем всё ок, создаем объект интервала
-    entered_zone = list(request.form['zones'])
-    print(entered_zone)
+    entered_zone = request.form.getlist('zones')
+    print("VVEDENIY ZONE: ", entered_zone)
     interval_obj = interval(
         start_dateTime,
         new_dateTime,
@@ -213,7 +214,7 @@ def add_work(request):
     task_with_ok = []
 
     for i in current_tasks:
-        if len(calendar_zones_objs[i.zone_name].get_task_ex(i.get_start_time(),i.get_end_time())) !=0:
+        if calendar_zones_objs[i.zone_name].get_task_ex(i.get_start_time(),i.get_end_time()) != None:
             print("I_ZONE: ", i.zone_name)
             res, new_task = find_time_for_task(calendar_zones_objs[i.zone_name],
                                                whitelist[i.zone_name], i)
