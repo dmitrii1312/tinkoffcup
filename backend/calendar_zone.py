@@ -79,7 +79,7 @@ class CalendarZone:
         res.deadline_time = datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%S")
         res.priority = [key for key, value in self.map_priority.items() if
                         value == event.icalendar_component["priority"]]
-        res.zone_name = event.calendar.name
+        res.zone_name = self.calendar.name
         return res
 
     def get_task(self, start, end):
