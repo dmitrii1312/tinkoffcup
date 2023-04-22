@@ -50,11 +50,10 @@ multiplicity = json_config_data['multiplicity']
 
 # Объекты типа календарь, сформированные на основе
 # zone = spb -> zone[spb] = имя календаря
-time.sleep(5)
+
 try:
     calendar_zones_objs = {}
     for i in zones:
-        print("ZONALIAS: ", zones[i])
         calendar_zones_objs[i] = \
             CalendarZone(str(remote_server).strip(), username, password)  # , zones[i])
 except Exception:
