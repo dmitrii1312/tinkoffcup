@@ -412,6 +412,7 @@ def request_to_task(request, work_id: str, zone):
     worktype = str(request.form['typeofWork'])
     workPriority = str(request.form['workPriority'])
     summary = str(request.form['summary'])
+    zipping = str(request.form['zipping'])
     entered_zone = zone
     current_task = typeOfWork(worktype, work_id)
     res, text = current_task.set_start_time(start_dateTime)
@@ -433,6 +434,9 @@ def request_to_task(request, work_id: str, zone):
     if not res:
         return res, text, None
     res, text = current_task.set_summary(summary)
+    if not res:
+        return res, text, None
+    res, text = current_task.set_zipping(zipping)
     if not res:
         return res, text, None
 
