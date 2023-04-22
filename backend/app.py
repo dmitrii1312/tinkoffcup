@@ -323,7 +323,7 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
         if i.start < task.get_start_time():
             free_start=0
         else:
-            dtime = i.start-task.get_start_time
+            dtime = i.start-task.get_start_time()
             free_start = dtime.seconds//60
         if i.end < task.get_start_time():
             continue
