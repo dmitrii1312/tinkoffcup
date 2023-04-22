@@ -76,7 +76,7 @@ class CalendarZone:
         res = typeOfWork(work_type=event.icalendar_component["tasktype"], work_id=event.icalendar_component["workid"])
         res.set_start_time(event.icalendar_component["dtstart"].dt)
         res.set_end_time(event.icalendar_component["dtend"].dt)
-        res.set_duration(res.calculate_duration())
+        res.set_duration_ex(res.calculate_duration())
         res.set_deadline((datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%SZ")))
         res.set_priority([key for key, value in self.map_priority.items() if
                           value == event.icalendar_component["priority"]][0])
