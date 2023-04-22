@@ -35,7 +35,6 @@ class typeOfWork:
     work_type: str  # тип работ
     work_id: str # id работ
     summary: str
-    zipping: str
 
     def __init__(self, work_type: str, work_id: str):
         self.work_type = work_type
@@ -118,10 +117,6 @@ class typeOfWork:
 
     def set_zone_name(self, name: str):
         self.zone_name = name
-        return True, "OK"
-
-    def set_zipping(self, zipping: str):
-        self.zipping = zipping
         return True, "OK"
 
     # Get methods
