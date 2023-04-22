@@ -74,7 +74,7 @@ class CalendarZone:
         res = typeOfWork(work_type=event.icalendar_component["tasktype"], work_id=event.icalendar_component["workid"])
         res.start_time = event.icalendar_component["dtstart"].dt
         res.end_time = event.icalendar_component["dtend"].dt
-        res.duration_time = res.set_duration(res.calculate_duration())
+        res.duration_time = res.calculate_duration()
         res.deadline_time = datetime.strptime(event.icalendar_component["deadline"],
                                        "%Y-%m-%dT%H:%M")
         res.priority = [key for key, value in self.map_priority.items() if value == event.icalendar_component["priority"]]
@@ -124,3 +124,8 @@ class CalendarZone:
         event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
+
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "tinkoff")
+task = obj.get_task(datetime(2023, 4, 26, 1), datetime(2023, 4, 26, 19))[0]
+print(task.data)
