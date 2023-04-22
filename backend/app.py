@@ -260,6 +260,7 @@ def add_work(request):
                                                whitelist[i.zone_name], i)
             if res:
                 task_to_reschedule.append(new_task)
+                print ("find slot for task,", new_task)
             else:
                 return res, "can't schedule task, no free windows till deadline"
         else:
@@ -295,12 +296,12 @@ def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
     newtask = task
     tasks = calendar.get_task_ex(task.get_start_time(),task.get_deadline_time())
     freeintervals = find_intervals_by_duration (calendar, whitelist, newtask)
-    if len(freeintervals) == 0:
-        return None
+    if len(freeintervals)==0:
+        return False, None
     else:
         newtask.set_start_time(freeintervals[0].start)
         newtask.set_end_time(newtask.calculate_end_time())
-        return newtask
+        return True, newtask
 
 def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWork ):
     planned_tasks=calendar.get_task_ex(task.get_start_time(),task.get_deadline_time())
@@ -356,10 +357,10 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             busy_end = dtime.seconds//60
         freebusy= fillarray(freebusy,busy_start, busy_end, 1)
     dur_task = task.get_duration_time()
-    start_index=find_free_space_index(freebusy, dur_task.seconds//60)
+    start_index=find_free_space_index(freebusy, dur_task.seconds//60,0)
     if start_index != -1:
         starttime_delta=timedelta(minutes=start_index)
-        retval.append(interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.duration))
+        retval.append(interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.get_duration_time()))
         return retval
     return None
 
