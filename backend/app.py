@@ -323,13 +323,15 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
         if i.start < task.get_start_time():
             free_start=0
         else:
-            free_start = int((i.start-task.get_start_time())//60)
+            dtime = i.start-task.get_start_time
+            free_start = dtime.seconds//60
         if i.end < task.get_start_time():
             continue
         if i.end > task.get_deadline_time():
             free_end = duration_minutes
         else:
-            free_end = i.end - task.get_start_time()
+            dtime = i.end - task.get_start_time()
+            free_end=dtime.seconds//60
         freebusy= fillarray(freebusy, free_start, free_end, 0)
 
     for i in planned_tasks:
@@ -339,15 +341,18 @@ def find_intervals_by_duration(calendar: CalendarZone, whitelist, task: typeOfWo
             if i.get_start_time() > task.get_start_time():
                 continue
             else:
-                busy_start = int((i.get_start_time()-task.get_start_time())//60)
+                dtime = i.get_start_time()-task.get_start_time()
+                busy_start=dtime.seconds//60
         if i.get_end_time()>task.get_deadline_time():
             busy_end = duration_minutes
         else:
             if i.get_end_time()< task.get_start_time():
                 continue
-            busy_end = (i.get_end_time()-task.get_start_time())//60
+            dtime = i.get_end_time()-task.get_start_time()
+            busy_end = dtime.seconds//60
         freebusy= fillarray(freebusy,busy_start, busy_end, 1)
-    start_index=find_free_space_index(freebusy,int(task.get_duration_time()//60))
+    dur_task = task.get_duration_time()
+    start_index=find_free_space_index(freebusy, dur_task.seconds//60)
     if start_index != -1:
         starttime_delta=timedelta(minutes=start_index)
         retval.append(interval(start=task.get_start_time()+starttime_delta,end=task.get_start_time()+starttime_delta+task.duration))

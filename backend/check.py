@@ -1,5 +1,6 @@
 from datetime import datetime
 from interval import interval
+from datetime import timedelta
 from calendar_zone import CalendarZone
 from icalendar import Event
 
