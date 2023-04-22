@@ -205,20 +205,28 @@ def add_work(request):
 
     # Creating Object
     work_id = uuid.uuid4()
-    for i in request.form['zones']:
+    for i in entered_zone:
         res, text, current_task= request_to_task(request, str(work_id), i)
         if res:
             current_tasks.append(current_task)
-        else:
-            return res, text
 
     # triing to save task object
-    res, listOftasks = calendar_zones_objs[entered_zone].add_task_ex(current_task)
-    if res:
-        return res, text
-    else:
-        res2, new_task = find_time_for_task(calendar_zones_objs[entered_zone],current_task)
-        return res, "task conflict"
+    task_to_reschedule = []
+    task_with_ok = []
+
+    for i in current_tasks:
+        if len(calendar_zones_objs[i.zone_name].get_task_ex(i.get_start_time(),i.get_end_time())) !=0:
+            res, new_task = find_time_for_task(calendar_zones_objs[i.zone_name],whitelist[i.zone_name],i)
+            if res:
+                task_to_reschedule.append(new_task)
+            else:
+                return res, "can't schedule task, no free windows till deadline"
+        else:
+            task_with_ok.append(i)
+
+    if len(task_to_reschedule) == 0:
+        for i in task_with_ok:
+            calendar_zones_objs[i.zone_name].add_task_ex(i)
 
 def cancel_task(request):
     work_id = request.form['work_id']
@@ -354,7 +362,7 @@ def request_to_task(request, work_id: str, zone):
     # Получаем тип работ (ручные, автоматические)
     worktype = str(request.form['typeofWork'])
     workPriority = str(request.form['workPriority'])
-    entered_zone = str(request.form['zones'])
+    entered_zone = zone
     current_task = typeOfWork(worktype, work_id)
     res, text = current_task.set_start_time(start_dateTime)
     if not res:
