@@ -288,7 +288,7 @@ def find_time_for_task(calendar: CalendarZone, whitelist, task: typeOfWork):
     newtask = task
     tasks = calendar.get_task_ex(task.get_start_time(),task.get_deadline_time())
     freeintervals = find_intervals_by_duration (calendar, whitelist, newtask)
-    if len(freeintervals) == 0:
+    if len(freeintervals)==0:
         return False, None
     else:
         newtask.set_start_time(freeintervals[0].start)
