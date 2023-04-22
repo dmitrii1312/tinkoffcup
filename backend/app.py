@@ -213,7 +213,7 @@ def add_work(request):
     task_with_ok = []
 
     for i in current_tasks:
-        if len(calendar_zones_objs[i.zone_name].get_task_ex(i.get_start_time(),i.get_end_time())) !=0:
+        if calendar_zones_objs[i.zone_name].get_task_ex(i.get_start_time(),i.get_end_time()) != None:
             print("I_ZONE: ", i.zone_name)
             res, new_task = find_time_for_task(calendar_zones_objs[i.zone_name],
                                                whitelist[i.zone_name], i)
