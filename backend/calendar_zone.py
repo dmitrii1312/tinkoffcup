@@ -1,7 +1,7 @@
 import caldav
 from datetime import datetime
 from typeOfWork import typeOfWork
-from icalendar import Calendar, vDatetime
+from icalendar import Calendar, vDatetime, vTime
 
 
 class CalendarZone:
@@ -38,7 +38,7 @@ class CalendarZone:
                 summary=summary,
                 priority=self.map_priority[priority],
                 tasktype=tasktype,
-                deadline=vDatetime(deadline),
+                deadline=deadline,
                 workid=work_id,
                 rrule={'FREQ': repeat}
             )
@@ -75,7 +75,8 @@ class CalendarZone:
         res.start_time = event.icalendar_component["dtstart"].dt
         res.end_time = event.icalendar_component["dtend"].dt
         res.duration_time = res.set_duration(res.calculate_duration())
-        res.deadline_time = event.icalendar_component["deadline"].dt
+        res.deadline_time = datetime.strptime(event.icalendar_component["deadline"],
+                                       "%Y-%m-%dT%H:%M")
         res.priority = [key for key, value in self.map_priority.items() if value == event.icalendar_component["priority"]]
         res.zone_name = event.calendar.name
         return res
