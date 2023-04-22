@@ -1,7 +1,7 @@
 import caldav
 from datetime import datetime
 from typeOfWork import typeOfWork
-from icalendar import Calendar, vDatetime
+from icalendar import Calendar, vDatetime, vTime
 
 
 class CalendarZone:
@@ -29,7 +29,8 @@ class CalendarZone:
         if name not in calendars:
             caldav.CalendarSet.make_calendar(name=name)
 
-    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, priority: str, summary="", repeat="once",
+    def add_task(self, start: datetime, end: datetime, deadline: datetime, work_id: str, priority: str, summary="",
+                 repeat="once",
                  tasktype="auto"):
 
         if repeat != "once":
@@ -39,7 +40,7 @@ class CalendarZone:
                 summary=summary,
                 priority=self.map_priority[priority],
                 tasktype=tasktype,
-                deadline=vDatetime(deadline),
+                deadline=deadline,
                 workid=work_id,
                 rrule={'FREQ': repeat}
             )
@@ -75,10 +76,11 @@ class CalendarZone:
         res = typeOfWork(work_type=event.icalendar_component["tasktype"], work_id=event.icalendar_component["workid"])
         res.start_time = event.icalendar_component["dtstart"].dt
         res.end_time = event.icalendar_component["dtend"].dt
-        res.duration_time = res.set_duration(res.calculate_duration())
-        res.deadline_time = event.icalendar_component["deadline"].dt
-        res.priority = [key for key, value in self.map_priority.items() if value == event.icalendar_component["priority"]]
-        res.zone_name = event.calendar.name
+        res.duration_time = res.calculate_duration()
+        res.deadline_time = datetime.strptime(event.icalendar_component["deadline"], "%Y%m%dT%H%M%S")
+        res.priority = [key for key, value in self.map_priority.items() if
+                        value == event.icalendar_component["priority"]]
+        res.zone_name = self.calendar.name
         return res
 
     def get_task(self, start, end):
@@ -120,7 +122,13 @@ class CalendarZone:
         event.icalendar_component["summary"] = type_of_work.summary
         event.icalendar_component["dtstart"].dt = type_of_work.start_time
         event.icalendar_component["dtend"].dt = type_of_work.end_time
-        event.icalendar_component["priority"] = [value for key, value in self.map_priority.items() if key == type_of_work.priority]
+        event.icalendar_component["priority"] = [value for key, value in self.map_priority.items() if
+                                                 key == type_of_work.priority]
         event.icalendar_component["deadline"] = vDatetime(type_of_work.deadline_time)
         event.icalendar_component["tasktype"] = type_of_work.work_type
         event.save()
+
+
+obj = CalendarZone("http://tsquared.keenetic.pro:5232", "admin", "admin", "tinkoff")
+task = obj.get_task(datetime(2023, 4, 26, 1), datetime(2023, 4, 26, 19))[0]
+print(task.data)
