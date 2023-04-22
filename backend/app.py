@@ -229,6 +229,8 @@ def add_work(request):
         for i in task_with_ok:
             calendar_zones_objs[i.zone_name].add_task_ex(i)
 
+    return True, "OK"
+
 def cancel_task(request):
     work_id = request.form['work_id']
     for calendar in calendar_zones_objs:
