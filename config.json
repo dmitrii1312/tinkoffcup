@@ -1,5 +1,5 @@
 {
-    "caldav_server": "http://radicale:5232",
+    "caldav_server": "http://radicale:5232/",
     "webcal_server": "http://agendav:8085",
     "username": "admin",
     "password": "admin",
